@@ -1119,7 +1119,7 @@ sptr< Dictionary::DataRequest > BglDictionary::getResource( string const & name 
     while( it.hasNext() )
     {
       QRegularExpressionMatch match = it.next();
-      result += str.midRef( pos, match.capturedStart() - pos );
+      result += QStringView{str}.mid( pos, match.capturedStart() - pos );
       pos = match.capturedEnd();
 
       QRegularExpressionMatchIterator itValue = oneValueExp.globalMatch( match.captured( 1 ) );
@@ -1132,7 +1132,7 @@ sptr< Dictionary::DataRequest > BglDictionary::getResource( string const & name 
 
     if( pos )
     {
-      result += str.midRef( pos );
+      result += QStringView{str}.mid( pos );
       str = result;
     }
 #else
