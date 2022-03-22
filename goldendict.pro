@@ -25,8 +25,9 @@ QT += core \
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets \
-          webkitwidgets \
+          webenginewidgets \
           printsupport \
+          core5compat \
           help
 
     # QMediaPlayer is not available in Qt4.
