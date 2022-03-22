@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QUrl>
 #include <QSet>
+#include <QRegExp>
 #include <list>
 #include "article_netmgr.hh"
 #include "audioplayerinterface.hh"
