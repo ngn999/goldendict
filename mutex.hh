@@ -10,10 +10,10 @@
 /// does provide the Lock class which doesn't seem to exist in Qt, and it does
 /// provide some abstraction for dictionaries in case they are to be ported
 /// away from Qt.
-class Mutex: public QMutex
+class Mutex: public QRecursiveMutex
 {
 public:
-  Mutex() : QMutex( Recursive )
+  Mutex()
   {}
   ~Mutex()
   {}

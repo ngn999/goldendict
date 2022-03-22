@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <wctype.h>
+#include <QRegExp>
 
 namespace Dsl {
 namespace Details {

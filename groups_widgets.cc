@@ -697,8 +697,8 @@ void DictGroupsWidget::addAutoGroups()
              QMessageBox::Cancel ) != QMessageBox::Yes )
     return;
 
-  QMap< QString, QVector< sptr<Dictionary::Class> > > dictMap;
-  QMap< QString, QVector< sptr<Dictionary::Class> > > morphoMap;
+  QMultiMap< QString, QVector< sptr<Dictionary::Class> > > dictMap;
+  QMultiMap< QString, QVector< sptr<Dictionary::Class> > > morphoMap;
 
   // Put active dictionaries into lists
 
