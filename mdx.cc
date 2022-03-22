@@ -894,7 +894,7 @@ void MddResourceRequest::run()
         while ( it.hasNext() )
         {
           QRegularExpressionMatch match = it.next();
-          newCSS += css.midRef( pos, match.capturedStart() - pos );
+          newCSS += QStringView{ css }.mid( pos, match.capturedStart() - pos );
           pos = match.capturedEnd();
           QString url = match.captured( 2 );
 #else
@@ -931,7 +931,7 @@ void MddResourceRequest::run()
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
         if( pos )
         {
-          newCSS += css.midRef( pos );
+          newCSS += QStringView{ css }.mid( pos );
           css = newCSS;
           newCSS.clear();
         }
@@ -1089,7 +1089,7 @@ QString & MdxDictionary::filterResource( QString const & articleId, QString & ar
     if( allLinksMatch.capturedEnd() < linkPos )
       continue;
 
-    articleNewText += article.midRef( linkPos, allLinksMatch.capturedStart() - linkPos );
+    articleNewText += QStringView{ article }.mid( linkPos, allLinksMatch.capturedStart() - linkPos );
     linkPos = allLinksMatch.capturedEnd();
 
     QString linkTxt = allLinksMatch.captured();
@@ -1164,7 +1164,7 @@ QString & MdxDictionary::filterResource( QString const & articleId, QString & ar
         match = closeScriptTagRe.match( article, linkPos );
         if( match.hasMatch() )
         {
-          articleNewText += article.midRef( linkPos, match.capturedEnd() - linkPos );
+          articleNewText += QStringView{ article }.mid( linkPos, match.capturedEnd() - linkPos );
           linkPos = match.capturedEnd();
         }
         continue;
@@ -1205,7 +1205,7 @@ QString & MdxDictionary::filterResource( QString const & articleId, QString & ar
   }
   if( linkPos )
   {
-    articleNewText += article.midRef( linkPos );
+    articleNewText += QStringView{ article }.mid( linkPos );
     article = articleNewText;
   }
 

@@ -4,7 +4,7 @@
 #ifndef __ARTICLEVIEW_HH_INCLUDED__
 #define __ARTICLEVIEW_HH_INCLUDED__
 
-#include <QWebView>
+#include <QWebEngineView>
 #include <QMap>
 #include <QUrl>
 #include <QSet>

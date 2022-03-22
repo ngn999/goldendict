@@ -239,7 +239,7 @@ void WebSiteArticleRequest::requestFinished( QNetworkReply * r )
     while( it.hasNext() )
     {
       QRegularExpressionMatch match = it.next();
-      articleNewString += articleString.midRef( pos, match.capturedStart() - pos );
+      articleNewString += QStringView{ articleString }.mid( pos, match.capturedStart() - pos );
       pos = match.capturedEnd();
 
       QString tag = match.captured();
@@ -277,7 +277,7 @@ void WebSiteArticleRequest::requestFinished( QNetworkReply * r )
     }
     if( pos )
     {
-      articleNewString += articleString.midRef( pos );
+      articleNewString += QStringView{ articleString }.mid( pos );
       articleString = articleNewString;
       articleNewString.clear();
     }
@@ -292,7 +292,7 @@ void WebSiteArticleRequest::requestFinished( QNetworkReply * r )
     while( it.hasNext() )
     {
       QRegularExpressionMatch match = it.next();
-      articleNewString += articleString.midRef( pos, match.capturedStart() - pos );
+      articleNewString += QStringView{ articleString }.mid( pos, match.capturedStart() - pos );
       pos = match.capturedEnd();
 
       QString newTag = match.captured( 1 ) + prefix + match.captured( 2 )
@@ -301,7 +301,7 @@ void WebSiteArticleRequest::requestFinished( QNetworkReply * r )
     }
     if( pos )
     {
-      articleNewString += articleString.midRef( pos );
+      articleNewString += QStringView{ articleString }.mid( pos );
       articleString = articleNewString;
       articleNewString.clear();
     }

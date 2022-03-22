@@ -854,7 +854,7 @@ QString & GlsDictionary::filterResource( QString & article )
   while( it.hasNext() )
   {
     QRegularExpressionMatch match = it.next();
-    articleNewText += article.midRef( pos, match.capturedStart() - pos );
+    articleNewText += QStringView{article}.mid( pos, match.capturedStart() - pos );
     pos = match.capturedEnd();
 
     QString link = match.captured( 3 );
@@ -911,7 +911,7 @@ QString & GlsDictionary::filterResource( QString & article )
   }
   if( pos )
   {
-    articleNewText += article.midRef( pos );
+    articleNewText += QStringView{ article }.mid( pos );
     article = articleNewText;
     articleNewText.clear();
   }
@@ -939,7 +939,7 @@ QString & GlsDictionary::filterResource( QString & article )
   while( it.hasNext() )
   {
     QRegularExpressionMatch match = it.next();
-    articleNewText += article.midRef( pos, match.capturedStart() - pos );
+    articleNewText += QStringView{ article }.mid( pos, match.capturedStart() - pos );
     pos = match.capturedEnd();
 
     QString src = match.captured( 2 );
@@ -983,7 +983,7 @@ QString & GlsDictionary::filterResource( QString & article )
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
   if( pos )
   {
-    articleNewText += article.midRef( pos );
+    articleNewText += QStringView{ article }.mid( pos );
     article = articleNewText;
     articleNewText.clear();
   }
@@ -1484,7 +1484,7 @@ void GlsResourceRequest::run()
       while( it.hasNext() )
       {
         QRegularExpressionMatch match = it.next();
-        newCSS += css.midRef( pos, match.capturedStart() - pos );
+        newCSS += QStringView{ css }.mid( pos, match.capturedStart() - pos );
         pos = match.capturedEnd();
 
         QString url = match.captured( 2 );
@@ -1502,7 +1502,7 @@ void GlsResourceRequest::run()
       }
       if( pos )
       {
-        newCSS += css.midRef( pos );
+        newCSS += QStringView{ css }.mid( pos );
         css = newCSS;
         newCSS.clear();
       }

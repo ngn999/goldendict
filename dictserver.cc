@@ -848,7 +848,7 @@ void DictServerArticleRequest::run()
               while( it.hasNext() )
               {
                 QRegularExpressionMatch match = it.next();
-                articleNewText += articleText.midRef( pos, match.capturedStart() - pos );
+                articleNewText += QStringView{ articleText }.mid( pos, match.capturedStart() - pos );
                 pos = match.capturedEnd();
 
                 QString phonetic_text = match.captured( 1 );
@@ -858,7 +858,7 @@ void DictServerArticleRequest::run()
               }
               if( pos )
               {
-                articleNewText += articleText.midRef( pos );
+                articleNewText += QStringView{ articleText }.mid( pos );
                 articleText = articleNewText;
                 articleNewText.clear();
               }
@@ -870,7 +870,7 @@ void DictServerArticleRequest::run()
               while( it.hasNext() )
               {
                 QRegularExpressionMatch match = it.next();
-                articleNewText += articleText.midRef( pos, match.capturedStart() - pos );
+                articleNewText += QStringView{ articleText }.mid( pos, match.capturedStart() - pos );
                 pos = match.capturedEnd();
 
                 QString link = match.captured( 1 );
@@ -884,7 +884,7 @@ void DictServerArticleRequest::run()
               }
               if( pos )
               {
-                articleNewText += articleText.midRef( pos );
+                articleNewText += QStringView{ articleText }.mid( pos );
                 articleText = articleNewText;
                 articleNewText.clear();
               }

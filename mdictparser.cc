@@ -389,7 +389,7 @@ bool MdictParser::readHeader( QDataStream & in )
   {
     QString styleSheets = headerAttributes.namedItem( "StyleSheet" ).toAttr().value();
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
-    QStringList lines = styleSheets.split( QRegularExpression( "[\r\n]" ), QString::KeepEmptyParts );
+    QStringList lines = styleSheets.split( QRegularExpression( "[\r\n]" ), Qt::KeepEmptyParts );
 #else
     QStringList lines = styleSheets.split( QRegExp( "[\r\n]" ), QString::KeepEmptyParts );
 #endif
@@ -662,7 +662,7 @@ QString & MdictParser::substituteStylesheet( QString & article, MdictParser::Sty
   {
     QRegularExpressionMatch match = it.next();
     int styleId = match.captured( 1 ).toInt();
-    articleNewText += article.midRef( pos, match.capturedStart() - pos );
+    articleNewText += QStringView{ article }.mid( pos, match.capturedStart() - pos );
     pos = match.capturedEnd();
 #else
   while ( ( pos = rx.indexIn( article, pos ) ) != -1 )
@@ -696,7 +696,7 @@ QString & MdictParser::substituteStylesheet( QString & article, MdictParser::Sty
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
   if( pos )
   {
-    articleNewText += article.midRef( pos );
+    articleNewText += QStringView{ article }.mid( pos );
     article = articleNewText;
     articleNewText.clear();
   }

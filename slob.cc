@@ -849,7 +849,7 @@ string SlobDictionary::convert( const string & in, RefEntry const & entry )
   {
     QRegularExpressionMatch match = it.next();
 
-    newText += text.midRef( pos, match.capturedStart() - pos );
+    newText += QStringView{ text }.mid( pos, match.capturedStart() - pos );
     pos = match.capturedEnd();
 
     QStringList list = match.capturedTexts();
@@ -888,7 +888,7 @@ string SlobDictionary::convert( const string & in, RefEntry const & entry )
   }
   if( pos )
   {
-    newText += text.midRef( pos );
+    newText += QStringView{ text }.mid( pos );
     text = newText;
   }
   newText.clear();
@@ -927,7 +927,7 @@ string SlobDictionary::convert( const string & in, RefEntry const & entry )
     {
       QRegularExpressionMatch match = it.next();
 
-      newText += text.midRef( pos, match.capturedStart() - pos );
+      newText += QStringView{ text }.mid( pos, match.capturedStart() - pos );
       pos = match.capturedEnd();
 
       QStringList list = match.capturedTexts();
@@ -941,8 +941,9 @@ string SlobDictionary::convert( const string & in, RefEntry const & entry )
           || list[ 1 ].compare( "mwe-math-fallback-image-inline" ) == 0
           || list[ 1 ].endsWith( " tex" ) )
       {
-        QString name;
-        name.sprintf( "%04X%04X%04X.gif", entry.itemIndex, entry.binIndex, texCount );
+          QString name = QString{ "%1%2%3" }.arg(entry.itemIndex, 4, 16, QLatin1Char('0'))
+                  .arg(entry.binIndex, 4, 16, QLatin1Char('0'))
+                  .arg(texCount, 4, 16, QLatin1Char('0')).toUpper() + ".gif";
         imgName = texCachePath + "/" + name;
 
         if( !QFileInfo( imgName ).exists() )
@@ -1053,7 +1054,7 @@ string SlobDictionary::convert( const string & in, RefEntry const & entry )
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
     if( pos )
     {
-      newText += text.midRef( pos );
+      newText += QStringView{ text}.mid( pos );
       text = newText;
     }
     newText.clear();

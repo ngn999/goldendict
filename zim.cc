@@ -783,7 +783,7 @@ string ZimDictionary::convert( const string & in )
   {
     QRegularExpressionMatch match = it.next();
 
-    newText += text.midRef( pos, match.capturedStart() - pos );
+    newText += QStringView{ text }.mid( pos, match.capturedStart() - pos );
     pos = match.capturedEnd();
 
     QStringList list = match.capturedTexts();
@@ -851,7 +851,7 @@ string ZimDictionary::convert( const string & in )
   }
   if( pos )
   {
-    newText += text.midRef( pos );
+    newText += QStringView{ text }.mid( pos );
     text = newText;
   }
   newText.clear();
@@ -872,7 +872,7 @@ string ZimDictionary::convert( const string & in )
   {
     QRegularExpressionMatch match = it.next();
 
-    newText += text.midRef( pos, match.capturedStart() - pos );
+    newText += QStringView{ text }.mid( pos, match.capturedStart() - pos );
     pos = match.capturedEnd();
 
     QStringList list = match.capturedTexts();
@@ -889,7 +889,7 @@ string ZimDictionary::convert( const string & in )
   }
   if( pos )
   {
-    newText += text.midRef( pos );
+    newText += QStringView{ text }.mid( pos );
     text = newText;
   }
   newText.clear();
