@@ -28,7 +28,7 @@
 #include "termination.hh"
 #include "atomic_rename.hh"
 
-#include <QWebSecurityOrigin>
+// #include <QWebSecurityOrigin>
 #include <QMessageBox>
 #include <QDebug>
 #include <QFile>
@@ -435,7 +435,8 @@ int main( int argc, char ** argv )
 #if QT_VERSION >= 0x040600
   // Add the dictionary scheme we use as local, so that the file:// links would
   // work in the articles. The function was introduced in Qt 4.6.
-  QWebSecurityOrigin::addLocalScheme( "gdlookup" );
+  // TODO:
+  // QWebSecurityOrigin::addLocalScheme( "gdlookup" );
 #endif
 
   MainWindow m( cfg );
