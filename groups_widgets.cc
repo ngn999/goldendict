@@ -697,8 +697,8 @@ void DictGroupsWidget::addAutoGroups()
              QMessageBox::Cancel ) != QMessageBox::Yes )
     return;
 
-  QMultiMap< QString, QVector< sptr<Dictionary::Class> > > dictMap;
-  QMultiMap< QString, QVector< sptr<Dictionary::Class> > > morphoMap;
+  QMap< QString, QVector< sptr<Dictionary::Class> > > dictMap;
+  QMap< QString, QVector< sptr<Dictionary::Class> > > morphoMap;
 
   // Put active dictionaries into lists
 
@@ -746,8 +746,8 @@ void DictGroupsWidget::addAutoGroups()
     dictMap[ name ] = vd;
   }
 
-  QStringList groupList = dictMap.uniqueKeys();
-  QStringList morphoList = morphoMap.uniqueKeys();
+  QStringList groupList = dictMap.keys();
+  QStringList morphoList = morphoMap.keys();
 
   // Insert morphology dictionaries into corresponding lists
 
