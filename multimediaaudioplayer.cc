@@ -4,15 +4,19 @@
 #ifdef MAKE_QTMULTIMEDIA_PLAYER
 
 #include <QByteArray>
-#include <QMediaContent>
+#include <QUrl>
+#include <QAudioOutput>
 #include "multimediaaudioplayer.hh"
 
 MultimediaAudioPlayer::MultimediaAudioPlayer() :
-  player( 0, QMediaPlayer::StreamPlayback )
+  player(QMediaPlayer())
 {
-  typedef void( QMediaPlayer::* ErrorSignal )( QMediaPlayer::Error );
-  connect( &player, static_cast< ErrorSignal >( &QMediaPlayer::error ),
-           this, &MultimediaAudioPlayer::onMediaPlayerError );
+    QAudioOutput *audioOutput = new QAudioOutput;
+    player.setAudioOutput( audioOutput );
+    // typedef void( QMediaPlayer::* ErrorSignal )( QMediaPlayer::Error );
+    // TODO: handle player error
+    // connect( &player, static_cast< ErrorSignal >( &QMediaPlayer::error ),
+    //       this, &MultimediaAudioPlayer::onMediaPlayerError );
 }
 
 QString MultimediaAudioPlayer::play( const char * data, int size )
@@ -23,14 +27,17 @@ QString MultimediaAudioPlayer::play( const char * data, int size )
   if( !audioBuffer.open( QIODevice::ReadOnly ) )
     return tr( "Couldn't open audio buffer for reading." );
 
-  player.setMedia( QMediaContent(), &audioBuffer );
+  // player.setMedia( QMediaContent(), &audioBuffer );
+  // TODO:
+  player.setSource(QUrl());
   player.play();
   return QString();
 }
 
 void MultimediaAudioPlayer::stop()
 {
-  player.setMedia( QMediaContent() ); // Forget about audioBuffer.
+  // player.setMedia( QMediaContent() ); // Forget about audioBuffer.
+  player.setSource(QUrl());
   audioBuffer.close();
   audioBuffer.setData( QByteArray() ); // Free memory.
 }
