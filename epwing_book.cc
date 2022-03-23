@@ -854,7 +854,7 @@ bool EpwingBook::getNextHeadword( EpwingHeadword & head )
 {
   EB_Position pos;
 
-  QRegExp badLinks( "#(v|n)\\d" );
+  QRegularExpression badLinks( "#(v|n)\\d" );
 
   // At first we check references queue
   while( !LinksQueue.isEmpty() )

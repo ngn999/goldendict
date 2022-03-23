@@ -34,6 +34,7 @@
 #include <QRunnable>
 #include <QThreadPool>
 #include <QSslConfiguration>
+#include <QRegularExpression>
 
 #include <limits.h>
 #include <set>
@@ -3529,7 +3530,7 @@ void MainWindow::on_saveArticle_triggered()
   QString fileName = view->getTitle().simplified();
 
   // Replace reserved filename characters
-  QRegExp rxName( "[/\\\\\\?\\*:\\|<>]" );
+  QRegularExpression rxName( "[/\\\\\\?\\*:\\|<>]" );
   fileName.replace( rxName, "_" );
 
   fileName += ".html";
@@ -3576,11 +3577,12 @@ void MainWindow::on_saveArticle_triggered()
 
       // Convert internal links
 
-      QRegExp rx3( "href=\"(bword:|gdlookup://localhost/)([^\"]+)\"" );
+      QRegularExpression rx3( "href=\"(bword:|gdlookup://localhost/)([^\"]+)\"" );
+      QRegularExpressionMatch match;
       int pos = 0;
-      while ( ( pos = rx3.indexIn( html, pos ) ) != -1 )
+      while ( ( pos = html.indexOf( rx3, pos, &match) ) != -1 )
       {
-        QString name = QUrl::fromPercentEncoding( rx3.cap( 2 ).simplified().toLatin1() );
+        QString name = QUrl::fromPercentEncoding( match.captured( 2 ).simplified().toLatin1() );
         QString anchor;
         name.replace( "?gdanchor=", "#" );
         int n = name.indexOf( '#' );
@@ -3588,16 +3590,16 @@ void MainWindow::on_saveArticle_triggered()
         {
           anchor = name.mid( n );
           name.truncate( n );
-          anchor.replace( QRegExp( "(g[0-9a-f]{32}_)[0-9a-f]+_" ), "\\1" ); // MDict anchors
+          anchor.replace( QRegularExpression( "(g[0-9a-f]{32}_)[0-9a-f]+_" ), "\\1" ); // MDict anchors
         }
         name.replace( rxName, "_" );
         name = QString( "href=\"" ) + QUrl::toPercentEncoding( name ) + ".html" + anchor + "\"";
-        html.replace( pos, rx3.cap().length(), name );
+        html.replace( pos, match.captured().length(), name );
         pos += name.length();
       }
 
       // MDict anchors
-      QRegExp anchorLinkRe( "(<\\s*a\\s+[^>]*\\b(?:name|id)\\b\\s*=\\s*[\"']*g[0-9a-f]{32}_)([0-9a-f]+_)(?=[^\"'])", Qt::CaseInsensitive );
+      QRegularExpression anchorLinkRe( "(<\\s*a\\s+[^>]*\\b(?:name|id)\\b\\s*=\\s*[\"']*g[0-9a-f]{32}_)([0-9a-f]+_)(?=[^\"'])", QRegularExpression::CaseInsensitiveOption );
       html.replace( anchorLinkRe, "\\1" );
 
       if ( complete )
