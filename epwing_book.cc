@@ -551,7 +551,7 @@ bool EpwingBook::setSubBook( int book_nom )
   if( f.open( QFile::ReadOnly | QFile::Text ) )
   {
     QTextStream ts( &f );
-    ts.setCodec( "UTF-8" );
+    // ts.setenc( "UTF-8" ); // in qt6 QTextStream utf8 is default.
 
     QString line = ts.readLine();
     while( !line.isEmpty() )

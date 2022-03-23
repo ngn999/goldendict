@@ -10,6 +10,7 @@
 #include "wstring_qt.hh"
 
 #include <QDebug>
+#include <QTextCodec>
 
 using namespace BtreeIndexing;
 using std::vector;
