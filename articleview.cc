@@ -2223,8 +2223,8 @@ void ArticleView::openSearch()
   // Clear any current selection
   if ( ui.definition->selectedText().size() )
   {
-    ui.definition->page()->currentFrame()->
-           evaluateJavaScript( "window.getSelection().removeAllRanges();_=0;" );
+    ui.definition->page()->
+           runJavaScript( "window.getSelection().removeAllRanges();_=0;" );
   }
 
   if ( ui.searchText->property( "noResults" ).toBool() )
@@ -2400,8 +2400,8 @@ void ArticleView::performFindOperation( bool restart, bool backwards, bool check
       // For now we resort to this hack:
       if ( ui.definition->selectedText().size() )
       {
-        ui.definition->page()->currentFrame()->
-               evaluateJavaScript( "window.getSelection().removeAllRanges();_=0;" );
+        ui.definition->page()->
+               runJavaScript( "window.getSelection().removeAllRanges();_=0;" );
       }
     }
 
@@ -2593,99 +2593,101 @@ void ArticleView::highlightFTSResults()
   // Clear any current selection
   if ( ui.definition->selectedText().size() )
   {
-    ui.definition->page()->currentFrame()->
-           evaluateJavaScript( "window.getSelection().removeAllRanges();_=0;" );
+    ui.definition->page()->
+           runJavaScript( "window.getSelection().removeAllRanges();_=0;" );
   }
 
-  QString pageText = ui.definition->page()->currentFrame()->toPlainText();
-  marksHandler->setText( pageText );
+  ui.definition->page()->toPlainText([this,marksHandler,regexp, url](const QString &pageText) {
+      marksHandler->setText( pageText );
 
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
-  QRegularExpressionMatchIterator it = regexp.globalMatch( marksHandler->normalizedText() );
-  while( it.hasNext() )
-  {
-    QRegularExpressionMatch match = it.next();
-
-    // Mirror pos and matched length to original string
-    int pos = match.capturedStart();
-    int spos = marksHandler->mirrorPosition( pos );
-    int matched = marksHandler->mirrorPosition( pos + match.capturedLength() ) - spos;
-
-    // Add mark pos (if presented)
-    while( spos + matched < pageText.length()
-           && pageText[ spos + matched ].category() == QChar::Mark_NonSpacing )
-      matched++;
-
-    if( matched > FTS::MaxMatchLengthForHighlightResults )
-    {
-      gdWarning( "ArticleView::highlightFTSResults(): Too long match - skipped (matched length %i, allowed %i)",
-                 match.capturedLength(), FTS::MaxMatchLengthForHighlightResults );
-    }
-    else
-      allMatches.append( pageText.mid( spos, matched ) );
-  }
-#else
-  int pos = 0;
-
-  while( pos >= 0 )
-  {
-    pos = regexp.indexIn( marksHandler->normalizedText(), pos );
-    if( pos >= 0 )
-    {
-      // Mirror pos and matched length to original string
-      int spos = marksHandler->mirrorPosition( pos );
-      int matched = marksHandler->mirrorPosition( pos + regexp.matchedLength() ) - spos;
-
-      // Add mark pos (if presented)
-      while( spos + matched < pageText.length()
-             && pageText[ spos + matched ].category() == QChar::Mark_NonSpacing )
-        matched++;
-
-      if( matched > FTS::MaxMatchLengthForHighlightResults )
+      QRegularExpressionMatchIterator it = regexp.globalMatch( marksHandler->normalizedText() );
+      while( it.hasNext() )
       {
-        gdWarning( "ArticleView::highlightFTSResults(): Too long match - skipped (matched length %i, allowed %i)",
-                   regexp.matchedLength(), FTS::MaxMatchLengthForHighlightResults );
-      }
-      else
-        allMatches.append( pageText.mid( spos, matched ) );
+          QRegularExpressionMatch match = it.next();
 
-      pos += regexp.matchedLength();
-    }
-  }
+          // Mirror pos and matched length to original string
+          int pos = match.capturedStart();
+          int spos = marksHandler->mirrorPosition( pos );
+          int matched = marksHandler->mirrorPosition( pos + match.capturedLength() ) - spos;
+
+          // Add mark pos (if presented)
+          while( spos + matched < pageText.length()
+                 && pageText[ spos + matched ].category() == QChar::Mark_NonSpacing )
+              matched++;
+
+          if( matched > FTS::MaxMatchLengthForHighlightResults )
+          {
+              gdWarning( "ArticleView::highlightFTSResults(): Too long match - skipped (matched length %i, allowed %i)",
+                         match.capturedLength(), FTS::MaxMatchLengthForHighlightResults );
+          }
+          else
+              allMatches.append( pageText.mid( spos, matched ) );
+      }
+#else
+      int pos = 0;
+
+      while( pos >= 0 )
+      {
+          pos = regexp.indexIn( marksHandler->normalizedText(), pos );
+          if( pos >= 0 )
+          {
+              // Mirror pos and matched length to original string
+              int spos = marksHandler->mirrorPosition( pos );
+              int matched = marksHandler->mirrorPosition( pos + regexp.matchedLength() ) - spos;
+
+              // Add mark pos (if presented)
+              while( spos + matched < pageText.length()
+                     && pageText[ spos + matched ].category() == QChar::Mark_NonSpacing )
+                  matched++;
+
+              if( matched > FTS::MaxMatchLengthForHighlightResults )
+              {
+                  gdWarning( "ArticleView::highlightFTSResults(): Too long match - skipped (matched length %i, allowed %i)",
+                             regexp.matchedLength(), FTS::MaxMatchLengthForHighlightResults );
+              }
+              else
+                  allMatches.append( pageText.mid( spos, matched ) );
+
+              pos += regexp.matchedLength();
+          }
+      }
 #endif
 
-  ftsSearchMatchCase = Qt4x5::Url::hasQueryItem( url, "matchcase" );
+      ftsSearchMatchCase = Qt4x5::Url::hasQueryItem( url, "matchcase" );
 
-  QWebEnginePage::FindFlags flags ( 0 );
+      QWebEnginePage::FindFlags flags ( 0 );
 
-  if( ftsSearchMatchCase )
-    flags |= QWebEnginePage::FindCaseSensitively;
+      if( ftsSearchMatchCase )
+          flags |= QWebEnginePage::FindCaseSensitively;
 
 #if QT_VERSION >= 0x040600
-  // TODO: fixme
-  // flags |= QWebEnginePage::HighlightAllOccurrences;
+      // TODO: fixme
+      // flags |= QWebEnginePage::HighlightAllOccurrences;
 
-  for( int x = 0; x < allMatches.size(); x++ )
-    ui.definition->findText( allMatches.at( x ), flags );
-  // TODO: fixme
-  // flags &= ~QWebPage::HighlightAllOccurrences;
+      for( int x = 0; x < allMatches.size(); x++ )
+          ui.definition->findText( allMatches.at( x ), flags );
+      // TODO: fixme
+      // flags &= ~QWebPage::HighlightAllOccurrences;
 #endif
 
-  if( !allMatches.isEmpty() )
-  {
-    if( ui.definition->findText( allMatches.at( 0 ), flags ) )
-    {
-        ui.definition->page()->
-               runJavaScript( QString( "%1=window.getSelection().getRangeAt(0);_=0;" )
-                                   .arg( rangeVarName ) );
-    }
-  }
+      if( !allMatches.isEmpty() )
+      {
+          if( ui.definition->findText( allMatches.at( 0 ), flags ) )
+          {
+              ui.definition->page()->
+                      runJavaScript( QString( "%1=window.getSelection().getRangeAt(0);_=0;" )
+                                     .arg( rangeVarName ) );
+          }
+      }
 
-  ui.ftsSearchFrame->show();
-  ui.ftsSearchPrevious->setEnabled( false );
-  ui.ftsSearchNext->setEnabled( allMatches.size()>1 );
+      ui.ftsSearchFrame->show();
+      ui.ftsSearchPrevious->setEnabled( false );
+      ui.ftsSearchNext->setEnabled( allMatches.size()>1 );
 
-  ftsSearchIsOpened = true;
+      ftsSearchIsOpened = true;
+  });
+
 }
 
 void ArticleView::performFtsFindOperation( bool backwards )
