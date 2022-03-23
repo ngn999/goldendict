@@ -67,7 +67,7 @@ Preferences::Preferences( QWidget * parent, Config::Class & cfg_ ):
                                                                  QDir::Files );
 
   // We need to sort by language name -- otherwise list looks really weird
-  QMap< QString, QPair< QIcon, QString > > sortedLocs;
+  QMultiMap< QString, QPair< QIcon, QString > > sortedLocs;
 
   for( QStringList::iterator i = availLocs.begin(); i != availLocs.end(); ++i )
   {
@@ -77,14 +77,14 @@ Preferences::Preferences( QWidget * parent, Config::Class & cfg_ ):
     if ( lang == "qt" )
       continue; // We skip qt's own localizations
 
-    sortedLocs.insertMulti(
+    sortedLocs.insert(
       Language::localizedNameForId( LangCoder::code2toInt( lang.toLatin1().data() ) ),
       QPair< QIcon, QString >(
         QIcon( QString( ":/flags/%1.png" ).arg( i->mid( 3, 2 ).toLower() ) ),
         i->mid( 0, i->size() - 3 ) ) );
   }
 
-  for( QMap< QString, QPair< QIcon, QString > >::iterator i = sortedLocs.begin();
+  for( QMultiMap< QString, QPair< QIcon, QString > >::iterator i = sortedLocs.begin();
        i != sortedLocs.end(); ++i )
     ui.interfaceLanguage->addItem( i.value().first, i.key(), i.value().second );
 
