@@ -23,7 +23,8 @@ QTextCodec *localeCodec = 0;
     QTextCodec::setCodecForLocale( utf8Codec );
   }
 
-  qWarning( "%s", QString().vsprintf( msg, ap ).toUtf8().data() );
+  // TODO: fixme
+  // qWarning( "%s", QString().vsprintf( msg, ap ).toUtf8().data() );
 
   if( logFilePtr && logFilePtr->isOpen() )
   {
@@ -47,8 +48,8 @@ QTextCodec *localeCodec = 0;
     localeCodec = QTextCodec::codecForLocale();
     QTextCodec::setCodecForLocale( utf8Codec );
   }
-
-  qDebug( "%s", QString().vsprintf( msg, ap ).toUtf8().data() );
+  // TODO: fixme
+  // qDebug( "%s", QString().vsprintf( msg, ap ).toUtf8().data() );
 
   if( logFilePtr && logFilePtr->isOpen() )
   {

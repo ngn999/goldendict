@@ -846,7 +846,7 @@ QString readElementText( QXmlStreamReader & stream )
 void addAllKeyTags( QXmlStreamReader & stream, list< QString > & words )
 {
   // todo implement support for tag <srt>, that overrides the article sorting order 
-  if ( stream.name() == "k" )
+  if ( stream.name() == QStringView{ QString { "k" } } )
   {
     words.push_back( readElementText( stream ) );
     return;
@@ -1231,7 +1231,7 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
 
           if ( stream.isStartElement() )
           {
-            if ( stream.name() != "xdxf" )
+            if ( stream.name() != QStringView{ QString{ "xdxf" } } )
               throw exNotXdxfFile( dictFiles[ 0 ] );
             else
             {
@@ -1251,7 +1251,7 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
 
               idxHeader.langTo = LangCoder::findIdForLanguageCode3( str.c_str() );
 
-              bool isLogical = ( stream.attributes().value( "format" ) == "logical" );
+              bool isLogical = ( stream.attributes().value( "format" ) == QStringView{ QString { "logical" } } );
 
               QRegExp regNum( "\\d+" );
               regNum.indexIn( stream.attributes().value( "revision" ).toString() );
@@ -1268,7 +1268,7 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
                 if ( stream.isStartElement() )
                 {
                   // todo implement using short <title> for denoting the dictionary in settings or dict list toolbar
-                  if ( stream.name() == "full_name" || stream.name() == "full_title" )
+                  if ( stream.name() == QStringView{ QString { "full_name" } } || stream.name() == QStringView{ QString { "full_title" } } )
                   {
                     // That's our name
 
@@ -1294,7 +1294,7 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
                     }
                   }
                   else
-                  if ( stream.name() == "description" )
+                  if ( stream.name() == QStringView{ QString { "description" } } )
                   {
                     // todo implement adding other information to the description like <publisher>, <authors>, <file_ver>, <creation_date>, <last_edited_date>, <dict_edition>, <publishing_date>, <dict_src_url> 
                     QString desc = readXhtmlData( stream );
@@ -1316,26 +1316,26 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
                     }
                   }
                   else
-                  if ( stream.name() == "abbreviations" )
+                  if ( stream.name() == QStringView{ QString { "abbreviations" } } )
                   {
                     QString s;
                     string value;
                     list < wstring > keys;
-                    while( !( stream.isEndElement() && stream.name() == "abbreviations" ) && !stream.atEnd() )
+                    while( !( stream.isEndElement() && stream.name() == QStringView{ QString { "abbreviations" } } ) && !stream.atEnd() )
                     {
                       if( !stream.readNextStartElement() )
                         break;
                       // abbreviations tag set switch at format revision = 30
                       if( idxHeader.revisionNumber >= 30 )
                       {
-                        while ( !( stream.isEndElement() && stream.name() == "abbr_def" ) || !stream.atEnd() )
+                        while ( !( stream.isEndElement() && stream.name() == QStringView{ QString { "abbr_def" } } ) || !stream.atEnd() )
                         {
-                          if ( stream.isStartElement() && stream.name() == "abbr_k" )
+                          if ( stream.isStartElement() && stream.name() == QStringView{ QString { "abbr_k" } } )
                           {
                             s = readElementText( stream );
                             keys.push_back( gd::toWString( s ) );
                           }
-                          else if ( stream.isStartElement() && stream.name() == "abbr_v" )
+                          else if ( stream.isStartElement() && stream.name() == QStringView{ QString { "abbr_v" } } )
                           {
                             s =  readElementText( stream );
                               value = Utf8::encode( Folding::trimWhitespace( gd::toWString( s ) ) );
@@ -1345,21 +1345,21 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
                               }
                               keys.clear();
                           }
-                          else if ( stream.isEndElement() && stream.name() == "abbreviations" )
+                          else if ( stream.isEndElement() && stream.name() == QStringView{ QString { "abbreviations" } })
                             break;
                           stream.readNext();
                         }
                       }
                       else
                       {
-                        while ( !( stream.isEndElement() && stream.name() == "abr_def" ) || !stream.atEnd() )
+                        while ( !( stream.isEndElement() && stream.name() == QStringView{ QString { "abr_def" } } ) || !stream.atEnd() )
                         {
-                          if ( stream.isStartElement() && stream.name() == "k" )
+                          if ( stream.isStartElement() && stream.name() == QStringView{ QString { "k" } } )
                           {
                             s = readElementText( stream );
                             keys.push_back( gd::toWString( s ) );
                           }
-                          else if ( stream.isStartElement() && stream.name() == "v" )
+                          else if ( stream.isStartElement() && stream.name() == QStringView{ QString { "v" } } )
                           {
                             s =  readElementText( stream );
                               value = Utf8::encode( Folding::trimWhitespace( gd::toWString( s ) ) );
@@ -1369,7 +1369,7 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
                               }
                               keys.clear();
                           }
-                          else if ( stream.isEndElement() && stream.name() == "abbreviations" )
+                          else if ( stream.isEndElement() && stream.name() == QStringView{ QString { "abbreviations" } } )
                             break;
                           stream.readNext();
                         }
@@ -1377,7 +1377,7 @@ vector< sptr< Dictionary::Class > > makeDictionaries(
                     }
                   }
                   else
-                  if ( stream.name() == "ar" )
+                  if ( stream.name() == QStringView{ QString { "ar" } } )
                   {
                     indexArticle( gzFile, stream, indexedWords, chunks,
                                   articleCount, wordCount, isLogical ? Logical : Visual );
