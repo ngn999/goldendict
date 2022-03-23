@@ -3,7 +3,7 @@
 
 #include <QtGlobal>
 
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= 0x040600 && 0
 
 #include <QWebInspector>
 #include <list>

@@ -1,6 +1,6 @@
 #include "articleinspector.hh"
 
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= 0x040600 && 0
 
 #include <algorithm>
 

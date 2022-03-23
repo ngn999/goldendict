@@ -36,7 +36,7 @@ void ArticleWebView::setUp( Config::Class * cfg )
 
 void ArticleWebView::triggerPageAction( QWebPage::WebAction action, bool checked )
 {
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= 0x040600 && 0
   if ( action == QWebPage::InspectElement )
   {
     // Get or create inspector instance for current view.
