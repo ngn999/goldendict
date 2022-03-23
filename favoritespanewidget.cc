@@ -907,7 +907,8 @@ void FavoritesModel::removeItemsForIndexes( const QModelIndexList & idxList )
   for( int i = lowestLevel; i >= 0; i-- )
   {
     QModelIndexList idxSublist = itemsToDelete[ i ];
-    std::sort( idxSublist.begin(), idxSublist.end(), qGreater< QModelIndex >() );
+    std::sort( idxSublist.begin(), idxSublist.end(), std::less< QModelIndex >() );
+    std::reverse(idxSublist.begin(), idxSublist.end());
 
     it = idxSublist.begin();
     for( ; it != idxSublist.end(); ++it )
