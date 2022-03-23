@@ -616,8 +616,10 @@ void ArticleResourceReply::readyReadSlot()
 
 void ArticleResourceReply::finishedSlot()
 {
+    // TODO: fixme
   if ( req->dataSize() < 0 )
-    error( ContentNotFoundError );
+      error();
+    // error( ContentNotFoundError );
 
   finished();
 }
