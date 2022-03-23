@@ -1028,16 +1028,16 @@ void MdxDictionary::loadArticle( uint32_t offset, string & articleText, bool noF
 
   // Check for unclosed <span> and <div>
 
-  int openTags = article.count( QRegExp( "<\\s*span\\b", Qt::CaseInsensitive ) );
-  int closedTags = article.count( QRegExp( "<\\s*/span\\s*>", Qt::CaseInsensitive ) );
+  int openTags = article.count( QRegularExpression( "<\\s*span\\b", QRegularExpression::CaseInsensitiveOption ) );
+  int closedTags = article.count( QRegularExpression( "<\\s*/span\\s*>", QRegularExpression::CaseInsensitiveOption ) );
   while( openTags > closedTags )
   {
     article += "</span>";
     closedTags += 1;
   }
 
-  openTags = article.count( QRegExp( "<\\s*div\\b", Qt::CaseInsensitive ) );
-  closedTags = article.count( QRegExp( "<\\s*/div\\s*>", Qt::CaseInsensitive ) );
+  openTags = article.count( QRegularExpression( "<\\s*div\\b", QRegularExpression::CaseInsensitiveOption ) );
+  closedTags = article.count( QRegularExpression( "<\\s*/div\\s*>", QRegularExpression::CaseInsensitiveOption ) );
   while( openTags > closedTags )
   {
     article += "</div>";

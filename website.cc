@@ -8,6 +8,8 @@
 #include <QTextCodec>
 #include <QDir>
 #include <QFileInfo>
+#include <QRegExp>
+#include <QRegularExpression>
 #include "gddebug.hh"
 
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
@@ -373,16 +375,16 @@ void WebSiteArticleRequest::requestFinished( QNetworkReply * r )
 #endif
     // Check for unclosed <span> and <div>
 
-    int openTags = articleString.count( QRegExp( "<\\s*span\\b", Qt::CaseInsensitive ) );
-    int closedTags = articleString.count( QRegExp( "<\\s*/span\\s*>", Qt::CaseInsensitive ) );
+    int openTags = articleString.count( QRegularExpression( "<\\s*span\\b", QRegularExpression::CaseInsensitiveOption ) );
+    int closedTags = articleString.count( QRegularExpression( "<\\s*/span\\s*>", QRegularExpression::CaseInsensitiveOption ) );
     while( openTags > closedTags )
     {
       articleString += "</span>";
       closedTags += 1;
     }
 
-    openTags = articleString.count( QRegExp( "<\\s*div\\b", Qt::CaseInsensitive ) );
-    closedTags = articleString.count( QRegExp( "<\\s*/div\\s*>", Qt::CaseInsensitive ) );
+    openTags = articleString.count( QRegularExpression( "<\\s*div\\b", QRegularExpression::CaseInsensitiveOption ) );
+    closedTags = articleString.count( QRegularExpression( "<\\s*/div\\s*>", QRegularExpression::CaseInsensitiveOption ) );
     while( openTags > closedTags )
     {
       articleString += "</div>";
@@ -480,7 +482,7 @@ sptr< DataRequest > WebSiteDictionary::getArticle( wstring const & str,
     {
       codec = QTextCodec::codecForName( QString( "ISO 8859-%1" ).arg( x ).toLatin1() );
       if( codec )
-        urlString.replace( QString( "%25GDISO%1%25" ).arg( x ), codec->fromUnicode( inputWord ).toPercentEncoding() );
+        urlString.replace( QString( "%25GDISO%1%25" ).arg( x ).toUtf8(), codec->fromUnicode( inputWord ).toPercentEncoding() );
 
       if ( x == 10 )
         x = 12; // Skip encodings 11..12, they don't exist

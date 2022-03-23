@@ -808,7 +808,7 @@ string ZimDictionary::convert( const string & in )
     if( linksType == UNKNOWN && tag.indexOf( '/' ) >= 0 )
     {
       QString word = QUrl::fromPercentEncoding( tag.toLatin1() );
-      word.remove( QRegExp( "\\.(s|)htm(l|)$", Qt::CaseInsensitive ) ).
+      word.remove( QRegularExpression( "\\.(s|)htm(l|)$", QRegularExpression::CaseInsensitiveOption ) ).
            replace( "_", " " );
 
       vector< WordArticleLink > links;
@@ -820,7 +820,7 @@ string ZimDictionary::convert( const string & in )
       }
       else
       {
-        word.remove( QRegExp(".*/") );
+        word.remove( QRegularExpression(".*/") );
         links = findArticles( gd::toWString( word ) );
         if( !links.empty() )
         {
@@ -832,15 +832,15 @@ string ZimDictionary::convert( const string & in )
 
     if( linksType == SLASH || linksType == UNKNOWN )
     {
-      tag.remove( QRegExp( "\\.(s|)htm(l|)$", Qt::CaseInsensitive ) ).
+      tag.remove( QRegularExpression( "\\.(s|)htm(l|)$", QRegularExpression::CaseInsensitiveOption ) ).
           replace( "_", "%20" ).
           prepend( "<a href=\"gdlookup://localhost/" ).
           append( "\" " + list[4] + ">" );
     }
     else
     {
-      tag.remove( QRegExp(".*/") ).
-          remove( QRegExp( "\\.(s|)htm(l|)$", Qt::CaseInsensitive ) ).
+      tag.remove( QRegularExpression(".*/") ).
+          remove( QRegularExpression( "\\.(s|)htm(l|)$", QRegularExpression::CaseInsensitiveOption ) ).
           replace( "_", "%20" ).
           prepend( "<a href=\"gdlookup://localhost/" ).
           append( "\" " + list[4] + ">" );
@@ -881,7 +881,7 @@ string ZimDictionary::convert( const string & in )
       list.append( QString() );
 
     QString tag = list[2];
-    tag.replace( QRegExp( "&lt;br( |)(\\\\|/|)&gt;", Qt::CaseInsensitive ) , "<br/>" ).
+    tag.replace( QRegularExpression( "&lt;br( |)(\\\\|/|)&gt;", QRegularExpression::CaseInsensitiveOption ) , "<br/>" ).
         prepend( list[1] ).
         append( "</a>" );
 

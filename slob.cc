@@ -877,8 +877,8 @@ string SlobDictionary::convert( const string & in, RefEntry const & entry )
     else
       anchor.clear();
 
-    tag.remove( QRegExp(".*/") ).
-        remove( QRegExp( "\\.(s|)htm(l|)$", Qt::CaseInsensitive ) ).
+    tag.remove( QRegularExpression(".*/") ).
+        remove( QRegularExpression( "\\.(s|)htm(l|)$", QRegularExpression::CaseInsensitiveOption ) ).
         replace( "_", "%20" ).
         prepend( "<a href=\"gdlookup://localhost/" ).
         append( anchor + "\" " + list[4] + ">" );

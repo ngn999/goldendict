@@ -5,6 +5,7 @@
 #include "folding.hh"
 #include "wstring_qt.hh"
 #include "language.hh"
+#include <QRegExp>
 
 #ifdef _MSC_VER
 #include <stub_msvc.h>

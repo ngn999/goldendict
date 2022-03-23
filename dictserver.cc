@@ -6,6 +6,7 @@
 #include <QUrl>
 #include <QTcpSocket>
 #include <QString>
+#include <QRegExp>
 #include <list>
 #include "gddebug.hh"
 #include "htmlescape.hh"
@@ -105,7 +106,7 @@ bool connectToServer( QTcpSocket & socket, QString const & url,
       QString authCommand = QString( "AUTH " );
       QString authString = msgId;
 
-      int pos = serverUrl.userInfo().indexOf( QRegExp( "[:;]" ) );
+      int pos = serverUrl.userInfo().indexOf( QRegularExpression( "[:;]" ) );
       if( pos > 0 )
       {
         authCommand += serverUrl.userInfo().left( pos );
@@ -202,11 +203,11 @@ public:
     if( pos < 0 )
       url = "dict://" + url;
 
-    databases = database_.split( QRegExp( "[ ,;]" ), QString::SkipEmptyParts );
+    databases = database_.split( QRegularExpression( "[ ,;]" ), Qt::SkipEmptyParts );
     if( databases.isEmpty() )
       databases.append( "*" );
 
-    strategies = strategies_.split( QRegExp( "[ ,;]" ), QString::SkipEmptyParts );
+    strategies = strategies_.split( QRegularExpression( "[ ,;]" ), Qt::SkipEmptyParts );
     if( strategies.isEmpty() )
       strategies.append( "prefix" );
   }

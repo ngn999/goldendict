@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QTextDocumentFragment>
+#include <QRegExp>
 #include "gddebug.hh"
 #include "fsencoding.hh"
 #include "audiolink.hh"
@@ -555,7 +556,7 @@ bool EpwingBook::setSubBook( int book_nom )
     QString line = ts.readLine();
     while( !line.isEmpty() )
     {
-      QStringList list = line.remove( '\n' ).split( ' ', QString::SkipEmptyParts );
+      QStringList list = line.remove( '\n' ).split( ' ', Qt::SkipEmptyParts );
       if( list.count() == 2 )
         customFontsMap[ list[ 0 ] ] = list[ 1 ];
       line = ts.readLine();
@@ -1031,7 +1032,7 @@ void EpwingBook::fixHeadword( QString & headword )
     return;
 
   QString fixed = headword;
-  fixed.remove( QRegExp( "/[^/]+/", Qt::CaseSensitive ) );
+  fixed.remove( QRegularExpression( "/[^/]+/" ) );
 
   if( isHeadwordCorrect( fixed ) )
   {
@@ -1202,8 +1203,10 @@ void EpwingBook::finalizeText( QString & text )
   // Replace references
 
   int pos = 0;
-  QRegExp reg1( "<R[^<]*>" );
-  QRegExp reg2( "</R[^<]*>" );
+  QRegularExpression reg1( "<R[^<]*>" );
+  QRegularExpressionMatch match1;
+  QRegularExpression reg2( "</R[^<]*>" );
+  QRegularExpressionMatch match2;
 
   EContainer cont( this, true );
 
@@ -1211,7 +1214,7 @@ void EpwingBook::finalizeText( QString & text )
 
   for( int x = 0; x < refCloseCount; x++ )
   {
-    pos = text.indexOf( reg1, pos );
+    pos = text.indexOf( reg1, pos, &match1 );
     if( pos < 0 )
       break;
 
@@ -1239,13 +1242,13 @@ void EpwingBook::finalizeText( QString & text )
 
     QString link = "<a href=\"" + url.toEncoded() + "\">";
 
-    text.replace( reg1.cap(), link );
+    text.replace( match1.captured(0), link );
 
-    pos = text.indexOf( reg2, pos );
+    pos = text.indexOf( reg2, pos, &match2 );
     if( pos < 0 )
       break;
 
-    text.replace( reg2.cap(), "</a>" );
+    text.replace( match2.captured(0), "</a>" );
   }
 }
 

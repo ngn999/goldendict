@@ -345,7 +345,7 @@ QNetworkReply * ArticleNetworkAccessManager::createRequest( Operation op,
   if ( hideGoldenDictHeader && req.url().scheme().startsWith("http", Qt::CaseInsensitive))
   {
     QNetworkRequest newReq( req );
-    newReq.setRawHeader("User-Agent", req.rawHeader("User-Agent").replace(qApp->applicationName(), ""));
+    newReq.setRawHeader("User-Agent", req.rawHeader("User-Agent").replace(qApp->applicationName().toUtf8(), QString{""}.toUtf8()));
     reply = QNetworkAccessManager::createRequest( op, newReq, outgoingData );
   }
 

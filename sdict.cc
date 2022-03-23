@@ -335,21 +335,23 @@ string SdictDictionary::convert( string const & in )
     int n = 0;
     for( ; ; )
     {
-      QRegExp start_link_tag( "<\\s*r\\s*>", Qt::CaseInsensitive );
-      QRegExp end_link_tag( "<\\s*/r\\s*>", Qt::CaseInsensitive );
+      QRegularExpression start_link_tag( "<\\s*r\\s*>", QRegularExpression::CaseInsensitiveOption );
+      QRegularExpressionMatch start_match;
+      QRegularExpression end_link_tag( "<\\s*/r\\s*>", QRegularExpression::CaseInsensitiveOption );
+      QRegularExpressionMatch end_match;
 
-      n = result.indexOf( start_link_tag, n );
+      n = result.indexOf( start_link_tag, n, &start_match );
       if( n < 0 )
         break;
 
-      int end = result.indexOf( end_link_tag, n );
+      int end = result.indexOf( end_link_tag, n, &end_match );
       if( end < 0 )
         break;
 
-      int tag_len = start_link_tag.cap().length();
+      int tag_len = start_match.captured(0).length();
       QString link_text = result.mid( n + tag_len, end - n - tag_len );
 
-      result.replace( end, end_link_tag.cap().length(), "</a>" );
+      result.replace( end, end_match.captured(0).length(), "</a>" );
       result.replace( n, tag_len, QString( "<a class=\"sdict_wordref\" href=\"bword:" ) + link_text + "\">");
     }
 
