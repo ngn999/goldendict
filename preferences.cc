@@ -105,7 +105,7 @@ Preferences::Preferences( QWidget * parent, Config::Class & cfg_ ):
   QStringList availHelps = QDir( Config::getHelpDir() ).entryList( QStringList( "*.qch" ),
                                                                  QDir::Files );
 
-  QMap< QString, QPair< QIcon, QString > > sortedHelps;
+  QMultiMap< QString, QPair< QIcon, QString > > sortedHelps;
 
   for( QStringList::iterator i = availHelps.begin(); i != availHelps.end(); ++i )
   {
@@ -122,13 +122,13 @@ Preferences::Preferences( QWidget * parent, Config::Class & cfg_ ):
         reg = lang.toUpper();
     }
 
-    sortedHelps.insertMulti(
+    sortedHelps.insert(
       Language::localizedNameForId( LangCoder::code2toInt( lang.toLatin1().data() ) ),
       QPair< QIcon, QString >(
         QIcon( QString( ":/flags/%1.png" ).arg( reg.toLower() ) ), lang + "_" + reg ) );
   }
 
-  for( QMap< QString, QPair< QIcon, QString > >::iterator i = sortedHelps.begin();
+  for( QMultiMap< QString, QPair< QIcon, QString > >::iterator i = sortedHelps.begin();
        i != sortedHelps.end(); ++i )
     ui.helpLanguage->addItem( i.value().first, i.key(), i.value().second );
 
