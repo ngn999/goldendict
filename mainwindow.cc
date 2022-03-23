@@ -1194,11 +1194,11 @@ void MainWindow::wheelEvent( QWheelEvent *ev )
 {
   if ( ev->modifiers().testFlag( Qt::ControlModifier ) )
   {
-    if ( ev->delta() > 0 )
+    if ( ev->angleDelta().y() > 0 ) // y() for vertical mouse wheel
     {
         zoomin();
     }
-    else if ( ev->delta() < 0 )
+    else if ( ev->angleDelta().y() < 0 )
     {
         zoomout();
     }
