@@ -893,12 +893,12 @@ void indexArticle( GzippedFile & gzFile,
 {
   ArticleFormat format( Default );
 
-  QStringRef formatValue = stream.attributes().value( "f" );
+  QStringView formatValue = stream.attributes().value( "f" );
 
-  if ( formatValue == "v" )
+  if ( formatValue.toString() == "v" )
     format = Visual;
   else
-  if ( formatValue == "l" )
+  if ( formatValue.toString() == "l" )
     format = Logical;
   if( format == Default )
     format = defaultFormat; 
