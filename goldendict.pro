@@ -26,6 +26,7 @@ QT += core \
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets \
           webenginewidgets \
+          webenginecore \
           printsupport \
           core5compat \
           help

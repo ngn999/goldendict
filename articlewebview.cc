@@ -3,7 +3,6 @@
 
 #include "articlewebview.hh"
 #include <QMouseEvent>
-#include <QWebFrame>
 #include <QApplication>
 #include "articleinspector.hh"
 
@@ -12,7 +11,7 @@
 #endif
 
 ArticleWebView::ArticleWebView( QWidget *parent ):
-  QWebView( parent ),
+  QWebEngineView( parent ),
 #if QT_VERSION >= 0x040600
   inspector( NULL ),
 #endif

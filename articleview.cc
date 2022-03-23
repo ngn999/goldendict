@@ -4,10 +4,11 @@
 #include "articleview.hh"
 #include <map>
 #include <QMessageBox>
+#include <QWebEngineView>
+#include <QWebEngineHistory>
 #include <QWebHitTestResult>
 #include <QMenu>
 #include <QDesktopServices>
-#include <QWebHistory>
 #include <QClipboard>
 #include <QKeyEvent>
 #include <QFileDialog>
@@ -176,11 +177,11 @@ public:
 
 /// End of DiacriticsHandler class
 
-static QVariant evaluateJavaScriptVariableSafe( QWebFrame * frame, const QString & variable )
+static void evaluateJavaScriptVariableSafe( QWebEnginePage * page, const QString & variable, const std::function<void(const QVariant &)> &resultCallback)
 {
-  return frame->evaluateJavaScript(
-        QString( "( typeof( %1 ) !== 'undefined' && %1 !== undefined ) ? %1 : null;" )
-        .arg( variable ) );
+    page->runJavaScript(
+                QString( "( typeof( %1 ) !== 'undefined' && %1 !== undefined ) ? %1 : null;" )
+                .arg( variable ), resultCallback);
 }
 
 namespace {
@@ -506,34 +507,35 @@ void ArticleView::loadFinished( bool )
 
   // See if we have any iframes in need of expansion
 
-  QList< QWebFrame * > frames = ui.definition->page()->mainFrame()->childFrames();
+  // TODO: fixme
+  // QList< QWebFrame * > frames = ui.definition->page()->mainFrame()->childFrames();
 
   bool wereFrames = false;
 
-  for( QList< QWebFrame * >::iterator i = frames.begin(); i != frames.end(); ++i )
-  {
-    if ( (*i)->frameName().startsWith( "gdexpandframe-" ) )
-    {
-      //DPRINTF( "Name: %s\n", (*i)->frameName().toUtf8().data() );
-      //DPRINTF( "Size: %d\n", (*i)->contentsSize().height() );
-      //DPRINTF( ">>>>>>>>Height = %s\n", (*i)->evaluateJavaScript( "document.body.offsetHeight;" ).toString().toUtf8().data() );
+//  for( QList< QWebFrame * >::iterator i = frames.begin(); i != frames.end(); ++i )
+//  {
+//    if ( (*i)->frameName().startsWith( "gdexpandframe-" ) )
+//    {
+//      //DPRINTF( "Name: %s\n", (*i)->frameName().toUtf8().data() );
+//      //DPRINTF( "Size: %d\n", (*i)->contentsSize().height() );
+//      //DPRINTF( ">>>>>>>>Height = %s\n", (*i)->evaluateJavaScript( "document.body.offsetHeight;" ).toString().toUtf8().data() );
 
-      // Set the height
-      ui.definition->page()->mainFrame()->evaluateJavaScript( QString( "document.getElementById('%1').height = %2;" ).
-        arg( (*i)->frameName() ).
-        arg( (*i)->contentsSize().height() ) );
+//      // Set the height
+//      ui.definition->page()->mainFrame()->evaluateJavaScript( QString( "document.getElementById('%1').height = %2;" ).
+//        arg( (*i)->frameName() ).
+//        arg( (*i)->contentsSize().height() ) );
 
-      // Show it
-      ui.definition->page()->mainFrame()->evaluateJavaScript( QString( "document.getElementById('%1').style.display = 'block';" ).
-        arg( (*i)->frameName() ) );
+//      // Show it
+//      ui.definition->page()->mainFrame()->evaluateJavaScript( QString( "document.getElementById('%1').style.display = 'block';" ).
+//        arg( (*i)->frameName() ) );
 
-      (*i)->evaluateJavaScript( "var gdLastUrlText;" );
-      (*i)->evaluateJavaScript( "document.addEventListener( 'click', function() { gdLastUrlText = window.event.srcElement.textContent; }, true );" );
-      (*i)->evaluateJavaScript( "document.addEventListener( 'contextmenu', function() { gdLastUrlText = window.event.srcElement.textContent; }, true );" );
+//      (*i)->evaluateJavaScript( "var gdLastUrlText;" );
+//      (*i)->evaluateJavaScript( "document.addEventListener( 'click', function() { gdLastUrlText = window.event.srcElement.textContent; }, true );" );
+//      (*i)->evaluateJavaScript( "document.addEventListener( 'contextmenu', function() { gdLastUrlText = window.event.srcElement.textContent; }, true );" );
 
-      wereFrames = true;
-    }
-  }
+//      wereFrames = true;
+//    }
+//  }
 
   if ( wereFrames )
   {
@@ -544,7 +546,9 @@ void ArticleView::loadFinished( bool )
     qApp->sendEvent( ui.definition, &ev );
   }
 
-  QVariant userDataVariant = ui.definition->history()->currentItem().userData();
+  QVariant userDataVariant = QVariant();
+  // QVariant userDataVariant = ui.definition->history()->currentItem().userData();
+
 
   if ( userDataVariant.type() == QVariant::Map )
   {
@@ -620,8 +624,8 @@ void ArticleView::loadFinished( bool )
       rx.setMinimal( true );
       rx.setPattern( anchor.left( 34 ) + "[0-9a-f]*_" + originalAnchor );
 
-      QWebElementCollection coll = ui.definition->page()->mainFrame()->findAllElements( "a[name]" );
-      coll += ui.definition->page()->mainFrame()->findAllElements( "a[id]" );
+      QWebElementCollection coll = ui.definition->page()->findAllElements( "a[name]" );
+      coll += ui.definition->page()->findAllElements( "a[id]" );
 
       for( QWebElementCollection::iterator it = coll.begin(); it != coll.end(); ++it )
       {
@@ -693,10 +697,13 @@ unsigned ArticleView::getGroup( QUrl const & url )
   return 0;
 }
 
-QStringList ArticleView::getArticlesList()
+// TODO: fixme, how to return sync
+void ArticleView::getArticlesList(const std::function<void(const QStringList &articlesList)> &cb)
 {
-  return evaluateJavaScriptVariableSafe( ui.definition->page()->mainFrame(), "gdArticleContents" )
-      .toString().trimmed().split( ' ', QString::SkipEmptyParts );
+    evaluateJavaScriptVariableSafe( ui.definition->page(), "gdArticleContents",
+                                           [cb](const QVariant &result) {
+        cb( result.toString().trimmed().split( ' ', Qt::SkipEmptyParts) );
+    } );
 }
 
 QString ArticleView::getActiveArticleId()
@@ -710,12 +717,12 @@ QString ArticleView::getActiveArticleId()
 
 QString ArticleView::getCurrentArticle()
 {
-  QVariant v = evaluateJavaScriptVariableSafe( ui.definition->page()->mainFrame(), "gdCurrentArticle" );
-
-  if ( v.type() == QVariant::String )
-    return v.toString();
-  else
-    return QString();
+    evaluateJavaScriptVariableSafe( ui.definition->page(), "gdCurrentArticle", [](QVariant v) {
+        if ( v.type() == QVariant::String )
+            return v.toString();
+        else
+            return QString();
+    } );
 }
 
 void ArticleView::jumpToDictionary( QString const & id, bool force )
@@ -737,25 +744,27 @@ void ArticleView::setCurrentArticle( QString const & id, bool moveToIt )
   if ( !ui.definition->isVisible() )
     return; // No action on background page, scrollIntoView there don't work
 
-  QString const dictionaryId = dictionaryIdFromScrollTo( id );
-  if ( getArticlesList().contains( dictionaryId ) )
-  {
-    if ( moveToIt )
-      ui.definition->page()->mainFrame()->evaluateJavaScript( QString( "document.getElementById('%1').scrollIntoView(true);" ).arg( id ) );
+  QString const  dictionaryId = dictionaryIdFromScrollTo( id );
+  getArticlesList([this, moveToIt, id,dictionaryId](const QStringList &articles) {
+      if ( articles.contains( dictionaryId ) )
+      {
+        if ( moveToIt )
+          ui.definition->page()->runJavaScript( QString( "document.getElementById('%1').scrollIntoView(true);" ).arg( id ) );
 
-    QMap< QString, QVariant > userData = ui.definition->history()->
-                                         currentItem().userData().toMap();
-    userData[ "currentArticle" ] = id;
-    ui.definition->history()->currentItem().setUserData( userData );
+//        QMap< QString, QVariant > userData = ui.definition->history()->
+//                                             currentItem().userData().toMap();
+//        userData[ "currentArticle" ] = id;
+//        ui.definition->history()->currentItem().setUserData( userData );
 
-    ui.definition->page()->mainFrame()->evaluateJavaScript(
-      QString( "gdMakeArticleActive( '%1' );" ).arg( dictionaryId ) );
-  }
+        ui.definition->page()->runJavaScript( QString( "gdMakeArticleActive( '%1' );" ).arg( dictionaryId ) );
+      }
+  });
+
 }
 
 void ArticleView::selectCurrentArticle()
 {
-  ui.definition->page()->mainFrame()->evaluateJavaScript(
+  ui.definition->page()->runJavaScript(
         QString( "gdSelectArticle( '%1' );" ).arg( getActiveArticleId() ) );
 }
 
@@ -764,8 +773,8 @@ bool ArticleView::isFramedArticle( QString const & ca )
   if ( ca.isEmpty() )
     return false;
 
-  return ui.definition->page()->mainFrame()->
-               evaluateJavaScript( QString( "!!document.getElementById('gdexpandframe-%1');" )
+  return ui.definition->page()->
+               runJavaScript( QString( "!!document.getElementById('gdexpandframe-%1');" )
                                           .arg( dictionaryIdFromScrollTo( ca ) ) ).toBool();
 }
 
@@ -789,58 +798,63 @@ void ArticleView::tryMangleWebsiteClickedUrl( QUrl & url, Contexts & contexts )
 
     if ( isFramedArticle( ca ) )
     {
-      QVariant result = evaluateJavaScriptVariableSafe( ui.definition->page()->currentFrame(), "gdLastUrlText" );
+        // TODO: fixme, check the reference in url, contexts, ca
+        QVariant result = evaluateJavaScriptVariableSafe( ui.definition->page(), "gdLastUrlText", [&url, contexts, ca](QVariant result) {
+                if ( result.type() == QVariant::String )
+        {
+                // Looks this way
+                contexts[ dictionaryIdFromScrollTo( ca ) ] = QString::fromLatin1( url.toEncoded() );
 
-      if ( result.type() == QVariant::String )
-      {
-        // Looks this way
-        contexts[ dictionaryIdFromScrollTo( ca ) ] = QString::fromLatin1( url.toEncoded() );
+                QUrl target;
 
-        QUrl target;
+                QString queryWord = result.toString();
 
-        QString queryWord = result.toString();
+                // Empty requests are treated as no request, so we work this around by
+                // adding a space.
+                if ( queryWord.isEmpty() )
+                queryWord = " ";
 
-        // Empty requests are treated as no request, so we work this around by
-        // adding a space.
-        if ( queryWord.isEmpty() )
-          queryWord = " ";
+                target.setScheme( "gdlookup" );
+                target.setHost( "localhost" );
+                target.setPath( "/" + queryWord );
 
-        target.setScheme( "gdlookup" );
-        target.setHost( "localhost" );
-        target.setPath( "/" + queryWord );
+                url = target;
+    }
+    } );
 
-        url = target;
-      }
+
     }
   }
 }
 
-void ArticleView::updateCurrentArticleFromCurrentFrame( QWebFrame * frame )
+// void ArticleView::updateCurrentArticleFromCurrentFrame( QWebFrame * frame )
+void ArticleView::updateCurrentArticleFromCurrentFrame()
 {
-  if ( !frame )
-    frame = ui.definition->page()->currentFrame();
+    // TODO: fixme, in QWebEngine, only js can access frame.
+//  if ( !frame )
+//    frame = ui.definition->page()->currentFrame();
 
-  for( ; frame; frame = frame->parentFrame() )
-  {
-    QString frameName = frame->frameName();
+//  for( ; frame; frame = frame->parentFrame() )
+//  {
+//    QString frameName = frame->frameName();
 
-    if ( frameName.startsWith( "gdexpandframe-" ) )
-    {
-      QString newCurrent = scrollToFromDictionaryId( frameName.mid( 14 ) );
+//    if ( frameName.startsWith( "gdexpandframe-" ) )
+//    {
+//      QString newCurrent = scrollToFromDictionaryId( frameName.mid( 14 ) );
 
-      if ( getCurrentArticle() != newCurrent )
-        setCurrentArticle( newCurrent, false );
+//      if ( getCurrentArticle() != newCurrent )
+//        setCurrentArticle( newCurrent, false );
 
-      break;
-    }
-  }
+//      break;
+//    }
+//  }
 }
 
 void ArticleView::saveHistoryUserData()
 {
-  QMap< QString, QVariant > userData = ui.definition->history()->
-                                       currentItem().userData().toMap();
-
+//  QMap< QString, QVariant > userData = ui.definition->history()->
+//                                       currentItem().userData().toMap();
+    QMap< QString, QVariant > userData = QMap< QString, QVariant >();
   // Save current article, which can be empty
 
   userData[ "currentArticle" ] = getCurrentArticle();
@@ -848,10 +862,13 @@ void ArticleView::saveHistoryUserData()
   // We also save window position. We restore it when the page is fully loaded,
   // when any hidden frames are expanded.
 
-  userData[ "sx" ] = ui.definition->page()->mainFrame()->evaluateJavaScript( "window.scrollX;" ).toDouble();
-  userData[ "sy" ] = ui.definition->page()->mainFrame()->evaluateJavaScript( "window.scrollY;" ).toDouble();
-
-  ui.definition->history()->currentItem().setUserData( userData );
+  ui.definition->page()->runJavaScript( "window.scrollX;", [this, userData](const QVariant &result) {
+      userData[ "sx" ] = result.toDouble();
+      ui.definition->page()->runJavaScript( "window.scrollY;", [userData](const QVariant &res){
+          userData[ "sy" ] = res.toDouble();
+          // ui.definition->history()->currentItem().setUserData( userData );
+      });
+  });
 }
 
 void ArticleView::cleanupTemp()
@@ -2458,10 +2475,11 @@ bool ArticleView::closeSearch()
     ui.ftsSearchFrame->hide();
     ui.definition->setFocus();
 
-    QWebPage::FindFlags flags ( 0 );
+    QWebEnginePage::FindFlags flags ( 0 );
 
   #if QT_VERSION >= 0x040600
-    flags |= QWebPage::HighlightAllOccurrences;
+    // TODO: fixme, find the correct enum
+    // flags |= QWebEnginePage::HighlightAllOccurrences;
   #endif
 
     ui.definition->findText( "", flags );
@@ -2638,26 +2656,27 @@ void ArticleView::highlightFTSResults()
 
   ftsSearchMatchCase = Qt4x5::Url::hasQueryItem( url, "matchcase" );
 
-  QWebPage::FindFlags flags ( 0 );
+  QWebEnginePage::FindFlags flags ( 0 );
 
   if( ftsSearchMatchCase )
-    flags |= QWebPage::FindCaseSensitively;
+    flags |= QWebEnginePage::FindCaseSensitively;
 
 #if QT_VERSION >= 0x040600
-  flags |= QWebPage::HighlightAllOccurrences;
+  // TODO: fixme
+  // flags |= QWebEnginePage::HighlightAllOccurrences;
 
   for( int x = 0; x < allMatches.size(); x++ )
     ui.definition->findText( allMatches.at( x ), flags );
-
-  flags &= ~QWebPage::HighlightAllOccurrences;
+  // TODO: fixme
+  // flags &= ~QWebPage::HighlightAllOccurrences;
 #endif
 
   if( !allMatches.isEmpty() )
   {
     if( ui.definition->findText( allMatches.at( 0 ), flags ) )
     {
-        ui.definition->page()->currentFrame()->
-               evaluateJavaScript( QString( "%1=window.getSelection().getRangeAt(0);_=0;" )
+        ui.definition->page()->
+               runJavaScript( QString( "%1=window.getSelection().getRangeAt(0);_=0;" )
                                    .arg( rangeVarName ) );
     }
   }
@@ -2681,15 +2700,15 @@ void ArticleView::performFtsFindOperation( bool backwards )
     return;
   }
 
-  QWebPage::FindFlags flags( 0 );
+  QWebEnginePage::FindFlags flags( 0 );
 
   if( ftsSearchMatchCase )
-    flags |= QWebPage::FindCaseSensitively;
+    flags |= QWebEnginePage::FindCaseSensitively;
 
 
   // Restore saved highlighted selection
-  ui.definition->page()->currentFrame()->
-         evaluateJavaScript( QString( "var sel=window.getSelection();sel.removeAllRanges();sel.addRange(%1);_=0;" )
+  ui.definition->page()->
+         runJavaScript( QString( "var sel=window.getSelection();sel.removeAllRanges();sel.addRange(%1);_=0;" )
                              .arg( rangeVarName ) );
 
   bool res;
@@ -2698,12 +2717,12 @@ void ArticleView::performFtsFindOperation( bool backwards )
     if( ftsPosition > 0 )
     {
       res = ui.definition->findText( allMatches.at( ftsPosition - 1 ),
-                                     flags | QWebPage::FindBackward );
+                                     flags | QWebEnginePage::FindBackward );
       ftsPosition -= 1;
     }
     else
       res = ui.definition->findText( allMatches.at( ftsPosition ),
-                                     flags | QWebPage::FindBackward );
+                                     flags | QWebEnginePage::FindBackward );
 
     ui.ftsSearchPrevious->setEnabled( res );
     if( !ui.ftsSearchNext->isEnabled() )
@@ -2725,8 +2744,8 @@ void ArticleView::performFtsFindOperation( bool backwards )
   }
 
   // Store new highlighted selection
-  ui.definition->page()->currentFrame()->
-         evaluateJavaScript( QString( "%1=window.getSelection().getRangeAt(0);_=0;" )
+  ui.definition->page()->
+         runJavaScript( QString( "%1=window.getSelection().getRangeAt(0);_=0;" )
                              .arg( rangeVarName ) );
 }
 

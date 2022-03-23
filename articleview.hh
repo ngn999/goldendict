@@ -187,7 +187,7 @@ public:
 
   /// Returns all articles currently present in view, as a list of dictionary
   /// string ids.
-  QStringList getArticlesList();
+  void getArticlesList(const std::function<void(const QStringList &articlesList)> &cb);
 
   /// Returns the dictionary id of the currently active article in the view.
   QString getActiveArticleId();
@@ -337,7 +337,9 @@ private:
 
   /// Use the known information about the current frame to update the current
   /// article's value.
-  void updateCurrentArticleFromCurrentFrame( QWebFrame * frame = 0 );
+  /// TODO: fixme
+  /// void updateCurrentArticleFromCurrentFrame( QWebFrame * frame = 0 );
+  void updateCurrentArticleFromCurrentFrame();
 
   /// Saves current article and scroll position for the current history item.
   /// Should be used when leaving the page.
