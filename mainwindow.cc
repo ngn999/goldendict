@@ -1297,9 +1297,10 @@ void MainWindow::applyProxySettings()
 
 void MainWindow::applyWebSettings()
 {
-  QWebSettings *defaultSettings = QWebSettings::globalSettings();
-  defaultSettings->setAttribute(QWebSettings::PluginsEnabled, cfg.preferences.enableWebPlugins);
-  defaultSettings->setAttribute( QWebSettings::DeveloperExtrasEnabled, true );
+    // TODO: fixme
+//  QWebEngineSettings *defaultSettings = QWebEngineSettings::globalSettings();
+//  defaultSettings->setAttribute(QWebSettings::PluginsEnabled, cfg.preferences.enableWebPlugins);
+//  defaultSettings->setAttribute( QWebSettings::DeveloperExtrasEnabled, true );
 }
 
 void MainWindow::setupNetworkCache( int maxSize )

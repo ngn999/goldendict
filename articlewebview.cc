@@ -23,7 +23,7 @@ ArticleWebView::ArticleWebView( QWidget *parent ):
 
 ArticleWebView::~ArticleWebView()
 {
-#if QT_VERSION >= 0x040600
+#if QT_VERSION >= 0x040600 && 0 // disable inspector
   if ( inspector )
     inspector->deleteLater();
 #endif
@@ -34,7 +34,7 @@ void ArticleWebView::setUp( Config::Class * cfg )
   this->cfg = cfg;
 }
 
-void ArticleWebView::triggerPageAction( QWebPage::WebAction action, bool checked )
+void ArticleWebView::triggerPageAction( QWebEnginePage::WebAction action, bool checked )
 {
 #if QT_VERSION >= 0x040600 && 0
   if ( action == QWebPage::InspectElement )
@@ -59,7 +59,7 @@ void ArticleWebView::triggerPageAction( QWebPage::WebAction action, bool checked
   }
 #endif
 
-  QWebView::triggerPageAction( action, checked );
+  QWebEngineView::triggerPageAction( action, checked );
 }
 
 bool ArticleWebView::event( QEvent * event )
@@ -79,7 +79,7 @@ bool ArticleWebView::event( QEvent * event )
     break;
   }
 
-  return QWebView::event( event );
+  return QWebEngineView::event( event );
 }
 
 void ArticleWebView::mousePressEvent( QMouseEvent * event )
@@ -87,7 +87,7 @@ void ArticleWebView::mousePressEvent( QMouseEvent * event )
   if ( event->buttons() & Qt::MiddleButton )
     midButtonPressed = true;
 
-  QWebView::mousePressEvent( event );
+  QWebEngineView::mousePressEvent( event );
 
   if ( selectionBySingleClick && ( event->buttons() & Qt::LeftButton ) )
   {
@@ -101,7 +101,7 @@ void ArticleWebView::mouseReleaseEvent( QMouseEvent * event )
 {
   bool noMidButton = !( event->buttons() & Qt::MiddleButton );
 
-  QWebView::mouseReleaseEvent( event );
+  QWebEngineView::mouseReleaseEvent( event );
 
   if ( midButtonPressed & noMidButton )
     midButtonPressed = false;
@@ -109,10 +109,11 @@ void ArticleWebView::mouseReleaseEvent( QMouseEvent * event )
 
 void ArticleWebView::mouseDoubleClickEvent( QMouseEvent * event )
 {
-  QWebView::mouseDoubleClickEvent( event );
-#if QT_VERSION >= 0x040600
-  int scrollBarWidth = page()->mainFrame()->scrollBarGeometry( Qt::Vertical ).width();
-  int scrollBarHeight = page()->mainFrame()->scrollBarGeometry( Qt::Horizontal ).height();
+  QWebEngineView::mouseDoubleClickEvent( event );
+  // TODO: fixme
+#if QT_VERSION >= 0x040600 && 0
+  int scrollBarWidth = page()->scrollBarGeometry( Qt::Vertical ).width();
+  int scrollBarHeight = page()->scrollBarGeometry( Qt::Horizontal ).height();
 #else
   int scrollBarWidth = 0;
   int scrollBarHeight = 0;
@@ -129,14 +130,14 @@ void ArticleWebView::mouseDoubleClickEvent( QMouseEvent * event )
 
 void ArticleWebView::focusInEvent( QFocusEvent * event )
 {
-  QWebView::focusInEvent( event );
+  QWebEngineView::focusInEvent( event );
 
   switch( event->reason() )
   {
     case Qt::MouseFocusReason:
     case Qt::TabFocusReason:
     case Qt::BacktabFocusReason:
-      page()->mainFrame()->evaluateJavaScript("top.focus();");
+      page()->runJavaScript("top.focus();");
       break;
 
     default:
@@ -173,7 +174,7 @@ void ArticleWebView::wheelEvent( QWheelEvent *ev )
   }
   else
   {
-     QWebView::wheelEvent( ev );
+     QWebEngineView::wheelEvent( ev );
   }
 
 }
