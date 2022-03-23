@@ -973,7 +973,7 @@ void MainWindow::mousePressEvent( QMouseEvent *event)
     return;
   }
 
-  if (event->button() != Qt::MidButton)
+  if (event->button() != Qt::MiddleButton)
     return QMainWindow::mousePressEvent(event);
 
   // middle clicked
