@@ -1965,36 +1965,38 @@ void MainWindow::updateFoundInDictsList()
 
   if ( view )
   {
-    QStringList ids = view->getArticlesList();
-    QString activeId = view->getActiveArticleId();
+      view->getArticlesList([view, this](const QStringList ids){
+          QString activeId = view->getActiveArticleId();
 
-    for( QStringList::const_iterator i = ids.constBegin(); i != ids.constEnd(); ++i)
-    {
-      // Find this dictionary
-
-      for( unsigned x = dictionaries.size(); x--; )
-      {
-        if ( dictionaries[ x ]->getId() == i->toUtf8().data() )
-        {
-          QString dictName = QString::fromUtf8( dictionaries[ x ]->getName().c_str() );
-          QString dictId = QString::fromUtf8( dictionaries[ x ]->getId().c_str() );
-          QListWidgetItem * item =
-              new QListWidgetItem(
-                dictionaries[ x ]->getIcon().pixmap(32).scaledToHeight( 21, Qt::SmoothTransformation ),
-                dictName,
-                ui.dictsList, QListWidgetItem::Type );
-          item->setData(Qt::UserRole, QVariant( dictId ) );
-          item->setToolTip(dictName);
-
-          ui.dictsList->addItem( item );
-          if (dictId == activeId)
+          for( QStringList::const_iterator i = ids.constBegin(); i != ids.constEnd(); ++i)
           {
-            ui.dictsList->setCurrentItem(item);
+              // Find this dictionary
+
+              for( unsigned x = dictionaries.size(); x--; )
+              {
+                  if ( dictionaries[ x ]->getId() == i->toUtf8().data() )
+                  {
+                      QString dictName = QString::fromUtf8( dictionaries[ x ]->getName().c_str() );
+                      QString dictId = QString::fromUtf8( dictionaries[ x ]->getId().c_str() );
+                      QListWidgetItem * item =
+                              new QListWidgetItem(
+                                  dictionaries[ x ]->getIcon().pixmap(32).scaledToHeight( 21, Qt::SmoothTransformation ),
+                                  dictName,
+                                  ui.dictsList, QListWidgetItem::Type );
+                      item->setData(Qt::UserRole, QVariant( dictId ) );
+                      item->setToolTip(dictName);
+
+                      ui.dictsList->addItem( item );
+                      if (dictId == activeId)
+                      {
+                          ui.dictsList->setCurrentItem(item);
+                      }
+                      break;
+                  }
+              }
           }
-          break;
-        }
-      }
-    }
+      });
+
   }
 }
 
