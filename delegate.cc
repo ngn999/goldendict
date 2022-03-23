@@ -1,5 +1,3 @@
-#include <QStyleOptionViewItemV4>
-
 #include "delegate.hh"
 
 WordListItemDelegate::WordListItemDelegate(  QAbstractItemDelegate * delegate  ) :
@@ -10,11 +8,8 @@ QStyledItemDelegate()
 
 void WordListItemDelegate::paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
   QStyleOptionViewItem opt4 = option;
-#else
-  QStyleOptionViewItemV4 opt4 = option;
-#endif
+
   QStyleOptionViewItem opt = option;
   initStyleOption( &opt4, index );
   if( opt4.text.isRightToLeft() )

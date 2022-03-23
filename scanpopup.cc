@@ -8,7 +8,8 @@
 #include <QBitmap>
 #include <QMenu>
 #include <QMouseEvent>
-#include <QDesktopWidget>
+// #include <QDesktopWidget>
+// TODO: https://doc.qt.io/qt-6/widgets-changes-qt6.html#qdesktopwidget-and-qapplication-desktop
 #include "gddebug.hh"
 #include "gestures.hh"
 

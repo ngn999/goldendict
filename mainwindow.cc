@@ -44,7 +44,8 @@
 #include "fsencoding.hh"
 #include "historypanewidget.hh"
 #include "qt4x5.hh"
-#include <QDesktopWidget>
+// #include <QDesktopWidget>
+// TODO: https://doc.qt.io/qt-6/widgets-changes-qt6.html#qdesktopwidget-and-qapplication-desktop
 #include "ui_authentication.h"
 
 #ifdef Q_OS_MAC
