@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include <QWebEngineView>
 #include <QWebEngineHistory>
-#include <QWebHitTestResult>
+//#include <QWebHitTestResult>
 #include <QMenu>
 #include <QDesktopServices>
 #include <QClipboard>
@@ -1735,330 +1735,331 @@ void ArticleView::print( QPrinter * printer ) const
     ui.definition->print( printer );
 }
 
+// TODO: fixme, disable contextmenu
 void ArticleView::contextMenuRequested( QPoint const & pos )
 {
-    // Is that a link? Is there a selection?
+//    // Is that a link? Is there a selection?
 
-    QWebHitTestResult r = ui.definition->page()->mainFrame()->
-            hitTestContent( pos );
+//    QWebHitTestResult r = ui.definition->page()->mainFrame()->
+//            hitTestContent( pos );
 
-    updateCurrentArticleFromCurrentFrame( r.frame() );
+//    updateCurrentArticleFromCurrentFrame( r.frame() );
 
-    QMenu menu( this );
+//    QMenu menu( this );
 
-    QAction * followLink = 0;
-    QAction * followLinkExternal = 0;
-    QAction * followLinkNewTab = 0;
-    QAction * lookupSelection = 0;
-    QAction * lookupSelectionGr = 0;
-    QAction * lookupSelectionNewTab = 0;
-    QAction * lookupSelectionNewTabGr = 0;
-    QAction * maxDictionaryRefsAction = 0;
-    QAction * addWordToHistoryAction = 0;
-    QAction * addHeaderToHistoryAction = 0;
-    QAction * sendWordToInputLineAction = 0;
-    QAction * saveImageAction = 0;
-    QAction * saveSoundAction = 0;
+//    QAction * followLink = 0;
+//    QAction * followLinkExternal = 0;
+//    QAction * followLinkNewTab = 0;
+//    QAction * lookupSelection = 0;
+//    QAction * lookupSelectionGr = 0;
+//    QAction * lookupSelectionNewTab = 0;
+//    QAction * lookupSelectionNewTabGr = 0;
+//    QAction * maxDictionaryRefsAction = 0;
+//    QAction * addWordToHistoryAction = 0;
+//    QAction * addHeaderToHistoryAction = 0;
+//    QAction * sendWordToInputLineAction = 0;
+//    QAction * saveImageAction = 0;
+//    QAction * saveSoundAction = 0;
 
-    QUrl targetUrl( r.linkUrl() );
-    Contexts contexts;
+//    QUrl targetUrl( r.linkUrl() );
+//    Contexts contexts;
 
-    tryMangleWebsiteClickedUrl( targetUrl, contexts );
+//    tryMangleWebsiteClickedUrl( targetUrl, contexts );
 
-    if ( !r.linkUrl().isEmpty() )
-    {
-        if ( !isExternalLink( targetUrl ) )
-        {
-            followLink = new QAction( tr( "&Open Link" ), &menu );
-            menu.addAction( followLink );
+//    if ( !r.linkUrl().isEmpty() )
+//    {
+//        if ( !isExternalLink( targetUrl ) )
+//        {
+//            followLink = new QAction( tr( "&Open Link" ), &menu );
+//            menu.addAction( followLink );
 
-            if ( !popupView )
-            {
-                followLinkNewTab = new QAction( QIcon( ":/icons/addtab.png" ),
-                                                tr( "Open Link in New &Tab" ), &menu );
-                menu.addAction( followLinkNewTab );
-            }
-        }
+//            if ( !popupView )
+//            {
+//                followLinkNewTab = new QAction( QIcon( ":/icons/addtab.png" ),
+//                                                tr( "Open Link in New &Tab" ), &menu );
+//                menu.addAction( followLinkNewTab );
+//            }
+//        }
 
-        if ( isExternalLink( r.linkUrl() ) )
-        {
-            followLinkExternal = new QAction( tr( "Open Link in &External Browser" ), &menu );
-            menu.addAction( followLinkExternal );
-            menu.addAction( ui.definition->pageAction( QWebEnginePage::CopyLinkToClipboard ) );
-        }
-    }
+//        if ( isExternalLink( r.linkUrl() ) )
+//        {
+//            followLinkExternal = new QAction( tr( "Open Link in &External Browser" ), &menu );
+//            menu.addAction( followLinkExternal );
+//            menu.addAction( ui.definition->pageAction( QWebEnginePage::CopyLinkToClipboard ) );
+//        }
+//    }
 
-#if QT_VERSION >= 0x040600
-    QWebElement el = r.element();
-    QUrl imageUrl;
-    if( !popupView && el.tagName().compare( "img", Qt::CaseInsensitive ) == 0 )
-    {
-        imageUrl = QUrl::fromPercentEncoding( el.attribute( "src" ).toLatin1() );
-        if( !imageUrl.isEmpty() )
-        {
-            menu.addAction( ui.definition->pageAction( QWebEnginePage::CopyImageToClipboard ) );
-            saveImageAction = new QAction( tr( "Save &image..." ), &menu );
-            menu.addAction( saveImageAction );
-        }
-    }
+//#if QT_VERSION >= 0x040600
+//    QWebElement el = r.element();
+//    QUrl imageUrl;
+//    if( !popupView && el.tagName().compare( "img", Qt::CaseInsensitive ) == 0 )
+//    {
+//        imageUrl = QUrl::fromPercentEncoding( el.attribute( "src" ).toLatin1() );
+//        if( !imageUrl.isEmpty() )
+//        {
+//            menu.addAction( ui.definition->pageAction( QWebEnginePage::CopyImageToClipboard ) );
+//            saveImageAction = new QAction( tr( "Save &image..." ), &menu );
+//            menu.addAction( saveImageAction );
+//        }
+//    }
 
-    if( !popupView && ( targetUrl.scheme() == "gdau"
-                        || Dictionary::WebMultimediaDownload::isAudioUrl( targetUrl ) ) )
-    {
-        saveSoundAction = new QAction( tr( "Save s&ound..." ), &menu );
-        menu.addAction( saveSoundAction );
-    }
-#endif
+//    if( !popupView && ( targetUrl.scheme() == "gdau"
+//                        || Dictionary::WebMultimediaDownload::isAudioUrl( targetUrl ) ) )
+//    {
+//        saveSoundAction = new QAction( tr( "Save s&ound..." ), &menu );
+//        menu.addAction( saveSoundAction );
+//    }
+//#endif
 
-    QString selectedText = ui.definition->selectedText();
-    QString text = selectedText.trimmed();
+//    QString selectedText = ui.definition->selectedText();
+//    QString text = selectedText.trimmed();
 
-    if ( text.size() && text.size() < 60 )
-    {
-        // We don't prompt for selections larger or equal to 60 chars, since
-        // it ruins the menu and it's hardly a single word anyway.
+//    if ( text.size() && text.size() < 60 )
+//    {
+//        // We don't prompt for selections larger or equal to 60 chars, since
+//        // it ruins the menu and it's hardly a single word anyway.
 
-        if( text.isRightToLeft() )
-        {
-            text.insert( 0, (ushort)0x202E ); // RLE, Right-to-Left Embedding
-            text.append( (ushort)0x202C ); // PDF, POP DIRECTIONAL FORMATTING
-        }
+//        if( text.isRightToLeft() )
+//        {
+//            text.insert( 0, (ushort)0x202E ); // RLE, Right-to-Left Embedding
+//            text.append( (ushort)0x202C ); // PDF, POP DIRECTIONAL FORMATTING
+//        }
 
-        lookupSelection = new QAction( tr( "&Look up \"%1\"" ).
-                                       arg( text ),
-                                       &menu );
-        menu.addAction( lookupSelection );
+//        lookupSelection = new QAction( tr( "&Look up \"%1\"" ).
+//                                       arg( text ),
+//                                       &menu );
+//        menu.addAction( lookupSelection );
 
-        if ( !popupView )
-        {
-            lookupSelectionNewTab = new QAction( QIcon( ":/icons/addtab.png" ),
-                                                 tr( "Look up \"%1\" in &New Tab" ).
-                                                 arg( text ),
-                                                 &menu );
-            menu.addAction( lookupSelectionNewTab );
+//        if ( !popupView )
+//        {
+//            lookupSelectionNewTab = new QAction( QIcon( ":/icons/addtab.png" ),
+//                                                 tr( "Look up \"%1\" in &New Tab" ).
+//                                                 arg( text ),
+//                                                 &menu );
+//            menu.addAction( lookupSelectionNewTab );
 
-            sendWordToInputLineAction = new QAction( tr( "Send \"%1\" to input line" ).
-                                                     arg( text ),
-                                                     &menu );
-            menu.addAction( sendWordToInputLineAction );
-        }
+//            sendWordToInputLineAction = new QAction( tr( "Send \"%1\" to input line" ).
+//                                                     arg( text ),
+//                                                     &menu );
+//            menu.addAction( sendWordToInputLineAction );
+//        }
 
-        addWordToHistoryAction = new QAction( tr( "&Add \"%1\" to history" ).
-                                              arg( text ),
-                                              &menu );
-        menu.addAction( addWordToHistoryAction );
+//        addWordToHistoryAction = new QAction( tr( "&Add \"%1\" to history" ).
+//                                              arg( text ),
+//                                              &menu );
+//        menu.addAction( addWordToHistoryAction );
 
-        Instances::Group const * altGroup =
-                ( groupComboBox && groupComboBox->getCurrentGroup() !=  getGroup( ui.definition->url() )  ) ?
-                    groups.findGroup( groupComboBox->getCurrentGroup() ) : 0;
+//        Instances::Group const * altGroup =
+//                ( groupComboBox && groupComboBox->getCurrentGroup() !=  getGroup( ui.definition->url() )  ) ?
+//                    groups.findGroup( groupComboBox->getCurrentGroup() ) : 0;
 
-        if ( altGroup )
-        {
-            QIcon icon = altGroup->icon.size() ? QIcon( ":/flags/" + altGroup->icon ) :
-                                                 QIcon();
+//        if ( altGroup )
+//        {
+//            QIcon icon = altGroup->icon.size() ? QIcon( ":/flags/" + altGroup->icon ) :
+//                                                 QIcon();
 
-            lookupSelectionGr = new QAction( icon, tr( "Look up \"%1\" in %2" ).
-                                             arg( text ).
-                                             arg( altGroup->name ), &menu );
-            menu.addAction( lookupSelectionGr );
+//            lookupSelectionGr = new QAction( icon, tr( "Look up \"%1\" in %2" ).
+//                                             arg( text ).
+//                                             arg( altGroup->name ), &menu );
+//            menu.addAction( lookupSelectionGr );
 
-            if ( !popupView )
-            {
-                lookupSelectionNewTabGr = new QAction( QIcon( ":/icons/addtab.png" ),
-                                                       tr( "Look up \"%1\" in %2 in &New Tab" ).
-                                                       arg( text ).
-                                                       arg( altGroup->name ), &menu );
-                menu.addAction( lookupSelectionNewTabGr );
-            }
-        }
-    }
+//            if ( !popupView )
+//            {
+//                lookupSelectionNewTabGr = new QAction( QIcon( ":/icons/addtab.png" ),
+//                                                       tr( "Look up \"%1\" in %2 in &New Tab" ).
+//                                                       arg( text ).
+//                                                       arg( altGroup->name ), &menu );
+//                menu.addAction( lookupSelectionNewTabGr );
+//            }
+//        }
+//    }
 
-    if( text.isEmpty() && !cfg.preferences.storeHistory)
-    {
-        QString txt = ui.definition->title();
-        if( txt.size() > 60 )
-            txt = txt.left( 60 ) + "...";
+//    if( text.isEmpty() && !cfg.preferences.storeHistory)
+//    {
+//        QString txt = ui.definition->title();
+//        if( txt.size() > 60 )
+//            txt = txt.left( 60 ) + "...";
 
-        addHeaderToHistoryAction = new QAction( tr( "&Add \"%1\" to history" ).
-                                                arg( txt ),
-                                                &menu );
-        menu.addAction( addHeaderToHistoryAction );
-    }
+//        addHeaderToHistoryAction = new QAction( tr( "&Add \"%1\" to history" ).
+//                                                arg( txt ),
+//                                                &menu );
+//        menu.addAction( addHeaderToHistoryAction );
+//    }
 
-    if ( selectedText.size() )
-    {
-        menu.addAction( ui.definition->pageAction( QWebEnginePage::Copy ) );
-        menu.addAction( &copyAsTextAction );
-    }
-    else
-    {
-        menu.addAction( &selectCurrentArticleAction );
-        menu.addAction( ui.definition->pageAction( QWebEnginePage::SelectAll ) );
-    }
+//    if ( selectedText.size() )
+//    {
+//        menu.addAction( ui.definition->pageAction( QWebEnginePage::Copy ) );
+//        menu.addAction( &copyAsTextAction );
+//    }
+//    else
+//    {
+//        menu.addAction( &selectCurrentArticleAction );
+//        menu.addAction( ui.definition->pageAction( QWebEnginePage::SelectAll ) );
+//    }
 
-    map< QAction *, QString > tableOfContents;
+//    map< QAction *, QString > tableOfContents;
 
-    // Add table of contents
-    QStringList ids = getArticlesList();
+//    // Add table of contents
+//    QStringList ids = getArticlesList();
 
-    if ( !menu.isEmpty() && ids.size() )
-        menu.addSeparator();
+//    if ( !menu.isEmpty() && ids.size() )
+//        menu.addSeparator();
 
-    unsigned refsAdded = 0;
-    bool maxDictionaryRefsReached = false;
+//    unsigned refsAdded = 0;
+//    bool maxDictionaryRefsReached = false;
 
-    for( QStringList::const_iterator i = ids.constBegin(); i != ids.constEnd();
-         ++i, ++refsAdded )
-    {
-        // Find this dictionary
+//    for( QStringList::const_iterator i = ids.constBegin(); i != ids.constEnd();
+//         ++i, ++refsAdded )
+//    {
+//        // Find this dictionary
 
-        for( unsigned x = allDictionaries.size(); x--; )
-        {
-            if ( allDictionaries[ x ]->getId() == i->toUtf8().data() )
-            {
-                QAction * action = 0;
-                if ( refsAdded == cfg.preferences.maxDictionaryRefsInContextMenu )
-                {
-                    // Enough! Or the menu would become too large.
-                    maxDictionaryRefsAction = new QAction( ".........", &menu );
-                    action = maxDictionaryRefsAction;
-                    maxDictionaryRefsReached = true;
-                }
-                else
-                {
-                    action = new QAction(
-                                allDictionaries[ x ]->getIcon(),
-                                QString::fromUtf8( allDictionaries[ x ]->getName().c_str() ),
-                                &menu );
-                    // Force icons in menu on all platforms,
-                    // since without them it will be much harder
-                    // to find things.
-                    action->setIconVisibleInMenu( true );
-                }
-                menu.addAction( action );
+//        for( unsigned x = allDictionaries.size(); x--; )
+//        {
+//            if ( allDictionaries[ x ]->getId() == i->toUtf8().data() )
+//            {
+//                QAction * action = 0;
+//                if ( refsAdded == cfg.preferences.maxDictionaryRefsInContextMenu )
+//                {
+//                    // Enough! Or the menu would become too large.
+//                    maxDictionaryRefsAction = new QAction( ".........", &menu );
+//                    action = maxDictionaryRefsAction;
+//                    maxDictionaryRefsReached = true;
+//                }
+//                else
+//                {
+//                    action = new QAction(
+//                                allDictionaries[ x ]->getIcon(),
+//                                QString::fromUtf8( allDictionaries[ x ]->getName().c_str() ),
+//                                &menu );
+//                    // Force icons in menu on all platforms,
+//                    // since without them it will be much harder
+//                    // to find things.
+//                    action->setIconVisibleInMenu( true );
+//                }
+//                menu.addAction( action );
 
-                tableOfContents[ action ] = *i;
+//                tableOfContents[ action ] = *i;
 
-                break;
-            }
-        }
-        if( maxDictionaryRefsReached )
-            break;
-    }
+//                break;
+//            }
+//        }
+//        if( maxDictionaryRefsReached )
+//            break;
+//    }
 
-    menu.addSeparator();
-    menu.addAction( &inspectAction );
+//    menu.addSeparator();
+//    menu.addAction( &inspectAction );
 
-    if ( !menu.isEmpty() )
-    {
-        connect( this, SIGNAL( closePopupMenu() ), &menu, SLOT( close() ) );
-        QAction * result = menu.exec( ui.definition->mapToGlobal( pos ) );
+//    if ( !menu.isEmpty() )
+//    {
+//        connect( this, SIGNAL( closePopupMenu() ), &menu, SLOT( close() ) );
+//        QAction * result = menu.exec( ui.definition->mapToGlobal( pos ) );
 
-        if ( !result )
-            return;
+//        if ( !result )
+//            return;
 
-        if ( result == followLink )
-            openLink( targetUrl, ui.definition->url(), getCurrentArticle(), contexts );
-        else
-            if ( result == followLinkExternal )
-                QDesktopServices::openUrl( r.linkUrl() );
-            else
-                if ( result == lookupSelection )
-                    showDefinition( selectedText, getGroup( ui.definition->url() ), getCurrentArticle() );
-                else
-                    if ( result == lookupSelectionGr && groupComboBox )
-                        showDefinition( selectedText, groupComboBox->getCurrentGroup(), QString() );
-                    else
-                        if ( result == addWordToHistoryAction )
-                            emit forceAddWordToHistory( selectedText );
-        if ( result == addHeaderToHistoryAction )
-            emit forceAddWordToHistory( ui.definition->title() );
-        else
-            if( result == sendWordToInputLineAction )
-                emit sendWordToInputLine( selectedText );
-            else
-                if ( !popupView && result == followLinkNewTab )
-                    emit openLinkInNewTab( targetUrl, ui.definition->url(), getCurrentArticle(), contexts );
-                else
-                    if ( !popupView && result == lookupSelectionNewTab )
-                        emit showDefinitionInNewTab( selectedText, getGroup( ui.definition->url() ),
-                                                     getCurrentArticle(), Contexts() );
-                    else
-                        if ( !popupView && result == lookupSelectionNewTabGr && groupComboBox )
-                            emit showDefinitionInNewTab( selectedText, groupComboBox->getCurrentGroup(),
-                                                         QString(), Contexts() );
-                        else
-                            if( result == saveImageAction || result == saveSoundAction )
-                            {
-#if QT_VERSION >= 0x040600
-                                QUrl url = ( result == saveImageAction ) ? imageUrl : targetUrl;
-                                QString savePath;
-                                QString fileName;
+//        if ( result == followLink )
+//            openLink( targetUrl, ui.definition->url(), getCurrentArticle(), contexts );
+//        else
+//            if ( result == followLinkExternal )
+//                QDesktopServices::openUrl( r.linkUrl() );
+//            else
+//                if ( result == lookupSelection )
+//                    showDefinition( selectedText, getGroup( ui.definition->url() ), getCurrentArticle() );
+//                else
+//                    if ( result == lookupSelectionGr && groupComboBox )
+//                        showDefinition( selectedText, groupComboBox->getCurrentGroup(), QString() );
+//                    else
+//                        if ( result == addWordToHistoryAction )
+//                            emit forceAddWordToHistory( selectedText );
+//        if ( result == addHeaderToHistoryAction )
+//            emit forceAddWordToHistory( ui.definition->title() );
+//        else
+//            if( result == sendWordToInputLineAction )
+//                emit sendWordToInputLine( selectedText );
+//            else
+//                if ( !popupView && result == followLinkNewTab )
+//                    emit openLinkInNewTab( targetUrl, ui.definition->url(), getCurrentArticle(), contexts );
+//                else
+//                    if ( !popupView && result == lookupSelectionNewTab )
+//                        emit showDefinitionInNewTab( selectedText, getGroup( ui.definition->url() ),
+//                                                     getCurrentArticle(), Contexts() );
+//                    else
+//                        if ( !popupView && result == lookupSelectionNewTabGr && groupComboBox )
+//                            emit showDefinitionInNewTab( selectedText, groupComboBox->getCurrentGroup(),
+//                                                         QString(), Contexts() );
+//                        else
+//                            if( result == saveImageAction || result == saveSoundAction )
+//                            {
+//#if QT_VERSION >= 0x040600
+//                                QUrl url = ( result == saveImageAction ) ? imageUrl : targetUrl;
+//                                QString savePath;
+//                                QString fileName;
 
-                                if ( cfg.resourceSavePath.isEmpty() )
-                                    savePath = QDir::homePath();
-                                else
-                                {
-                                    savePath = QDir::fromNativeSeparators( cfg.resourceSavePath );
-                                    if ( !QDir( savePath ).exists() )
-                                        savePath = QDir::homePath();
-                                }
+//                                if ( cfg.resourceSavePath.isEmpty() )
+//                                    savePath = QDir::homePath();
+//                                else
+//                                {
+//                                    savePath = QDir::fromNativeSeparators( cfg.resourceSavePath );
+//                                    if ( !QDir( savePath ).exists() )
+//                                        savePath = QDir::homePath();
+//                                }
 
-                                QString name = Qt4x5::Url::path( url ).section( '/', -1 );
+//                                QString name = Qt4x5::Url::path( url ).section( '/', -1 );
 
-                                if ( result == saveSoundAction )
-                                {
-                                    // Audio data
-                                    if ( name.indexOf( '.' ) < 0 )
-                                        name += ".wav";
+//                                if ( result == saveSoundAction )
+//                                {
+//                                    // Audio data
+//                                    if ( name.indexOf( '.' ) < 0 )
+//                                        name += ".wav";
 
-                                    fileName = savePath + "/" + name;
-                                    fileName = QFileDialog::getSaveFileName( parentWidget(), tr( "Save sound" ),
-                                                                             fileName,
-                                                                             tr( "Sound files (*.wav *.ogg *.oga *.mp3 *.mp4 *.aac *.flac *.mid *.wv *.ape);;All files (*.*)" ) );
-                                }
-                                else
-                                {
-                                    // Image data
+//                                    fileName = savePath + "/" + name;
+//                                    fileName = QFileDialog::getSaveFileName( parentWidget(), tr( "Save sound" ),
+//                                                                             fileName,
+//                                                                             tr( "Sound files (*.wav *.ogg *.oga *.mp3 *.mp4 *.aac *.flac *.mid *.wv *.ape);;All files (*.*)" ) );
+//                                }
+//                                else
+//                                {
+//                                    // Image data
 
-                                    // Check for babylon image name
-                                    if ( name[ 0 ] == '\x1E' )
-                                        name.remove( 0, 1 );
-                                    if ( name.length() && name[ name.length() - 1 ] == '\x1F' )
-                                        name.chop( 1 );
+//                                    // Check for babylon image name
+//                                    if ( name[ 0 ] == '\x1E' )
+//                                        name.remove( 0, 1 );
+//                                    if ( name.length() && name[ name.length() - 1 ] == '\x1F' )
+//                                        name.chop( 1 );
 
-                                    fileName = savePath + "/" + name;
-                                    fileName = QFileDialog::getSaveFileName( parentWidget(), tr( "Save image" ),
-                                                                             fileName,
-                                                                             tr( "Image files (*.bmp *.jpg *.png *.tif);;All files (*.*)" ) );
-                                }
+//                                    fileName = savePath + "/" + name;
+//                                    fileName = QFileDialog::getSaveFileName( parentWidget(), tr( "Save image" ),
+//                                                                             fileName,
+//                                                                             tr( "Image files (*.bmp *.jpg *.png *.tif);;All files (*.*)" ) );
+//                                }
 
-                                if ( !fileName.isEmpty() )
-                                {
-                                    QFileInfo fileInfo( fileName );
-                                    emit storeResourceSavePath( QDir::toNativeSeparators( fileInfo.absoluteDir().absolutePath() ) );
-                                    saveResource( url, ui.definition->url(), fileName );
-                                }
-#endif
-                            }
-                            else
-                            {
-                                if ( !popupView && result == maxDictionaryRefsAction )
-                                    emit showDictsPane();
+//                                if ( !fileName.isEmpty() )
+//                                {
+//                                    QFileInfo fileInfo( fileName );
+//                                    emit storeResourceSavePath( QDir::toNativeSeparators( fileInfo.absoluteDir().absolutePath() ) );
+//                                    saveResource( url, ui.definition->url(), fileName );
+//                                }
+//#endif
+//                            }
+//                            else
+//                            {
+//                                if ( !popupView && result == maxDictionaryRefsAction )
+//                                    emit showDictsPane();
 
-                                // Match against table of contents
-                                QString id = tableOfContents[ result ];
+//                                // Match against table of contents
+//                                QString id = tableOfContents[ result ];
 
-                                if ( id.size() )
-                                    setCurrentArticle( scrollToFromDictionaryId( id ), true );
-                            }
-    }
-#if 0
-    DPRINTF( "%s\n", r.linkUrl().isEmpty() ? "null" : "not null" );
+//                                if ( id.size() )
+//                                    setCurrentArticle( scrollToFromDictionaryId( id ), true );
+//                            }
+//    }
+//#if 0
+//    DPRINTF( "%s\n", r.linkUrl().isEmpty() ? "null" : "not null" );
 
-    DPRINTF( "url = %s\n", r.linkUrl().toString().toLocal8Bit().data() );
-    DPRINTF( "title = %s\n", r.title().toLocal8Bit().data() );
-#endif
+//    DPRINTF( "url = %s\n", r.linkUrl().toString().toLocal8Bit().data() );
+//    DPRINTF( "title = %s\n", r.title().toLocal8Bit().data() );
+//#endif
 }
 
 void ArticleView::resourceDownloadFinished()
@@ -2282,111 +2283,112 @@ void ArticleView::onJsActiveArticleChanged(QString const & id)
     emit activeArticleChanged( this, dictionaryIdFromScrollTo( id ) );
 }
 
+// TODO: enable doubleClicked
 void ArticleView::doubleClicked( QPoint pos )
 {
-#if QT_VERSION >= 0x040600
-    QWebHitTestResult r = ui.definition->page()->mainFrame()->hitTestContent( pos );
-    QWebElement el = r.element();
-    QUrl imageUrl;
-    if( !popupView && el.tagName().compare( "img", Qt::CaseInsensitive ) == 0 )
-    {
-        // Double click on image; download it and transfer to external program
+//#if QT_VERSION >= 0x040600
+//    QWebHitTestResult r = ui.definition->page()->mainFrame()->hitTestContent( pos );
+//    QWebElement el = r.element();
+//    QUrl imageUrl;
+//    if( !popupView && el.tagName().compare( "img", Qt::CaseInsensitive ) == 0 )
+//    {
+//        // Double click on image; download it and transfer to external program
 
-        imageUrl = QUrl::fromPercentEncoding( el.attribute( "src" ).toLatin1() );
-        if( !imageUrl.isEmpty() )
-        {
-            // Download it
+//        imageUrl = QUrl::fromPercentEncoding( el.attribute( "src" ).toLatin1() );
+//        if( !imageUrl.isEmpty() )
+//        {
+//            // Download it
 
-            // Clear any pending ones
-            resourceDownloadRequests.clear();
+//            // Clear any pending ones
+//            resourceDownloadRequests.clear();
 
-            resourceDownloadUrl = imageUrl;
-            sptr< Dictionary::DataRequest > req;
+//            resourceDownloadUrl = imageUrl;
+//            sptr< Dictionary::DataRequest > req;
 
-            if ( imageUrl.scheme() == "http" || imageUrl.scheme() == "https" || imageUrl.scheme() == "ftp" )
-            {
-                // Web resource
-                req = new Dictionary::WebMultimediaDownload( imageUrl, articleNetMgr );
-            }
-            else
-                if ( imageUrl.scheme() == "bres" || imageUrl.scheme() == "gdpicture" )
-                {
-                    // Local resource
-                    QString contentType;
-                    req = articleNetMgr.getResource( imageUrl, contentType );
-                }
-                else
-                {
-                    // Unsupported scheme
-                    gdWarning( "Unsupported url scheme \"%s\" to download image\n", imageUrl.scheme().toUtf8().data() );
-                    return;
-                }
+//            if ( imageUrl.scheme() == "http" || imageUrl.scheme() == "https" || imageUrl.scheme() == "ftp" )
+//            {
+//                // Web resource
+//                req = new Dictionary::WebMultimediaDownload( imageUrl, articleNetMgr );
+//            }
+//            else
+//                if ( imageUrl.scheme() == "bres" || imageUrl.scheme() == "gdpicture" )
+//                {
+//                    // Local resource
+//                    QString contentType;
+//                    req = articleNetMgr.getResource( imageUrl, contentType );
+//                }
+//                else
+//                {
+//                    // Unsupported scheme
+//                    gdWarning( "Unsupported url scheme \"%s\" to download image\n", imageUrl.scheme().toUtf8().data() );
+//                    return;
+//                }
 
-            if ( !req.get() )
-            {
-                // Request failed, fail
-                gdWarning( "Can't create request to download image \"%s\"\n", imageUrl.toString().toUtf8().data() );
-                return;
-            }
+//            if ( !req.get() )
+//            {
+//                // Request failed, fail
+//                gdWarning( "Can't create request to download image \"%s\"\n", imageUrl.toString().toUtf8().data() );
+//                return;
+//            }
 
-            if ( req->isFinished() && req->dataSize() >= 0 )
-            {
-                // Have data ready, handle it
-                resourceDownloadRequests.push_back( req );
-                resourceDownloadFinished();
-                return;
-            }
-            else
-                if ( !req->isFinished() )
-                {
-                    // Queue to be handled when done
-                    resourceDownloadRequests.push_back( req );
-                    connect( req.get(), SIGNAL( finished() ), this, SLOT( resourceDownloadFinished() ) );
-                }
-            if ( resourceDownloadRequests.empty() ) // No requests were queued
-            {
-                gdWarning( "The referenced resource \"%s\" doesn't exist\n", imageUrl.toString().toUtf8().data() ) ;
-                return;
-            }
-            else
-                resourceDownloadFinished(); // Check any requests finished already
-        }
-        return;
-    }
-#endif
+//            if ( req->isFinished() && req->dataSize() >= 0 )
+//            {
+//                // Have data ready, handle it
+//                resourceDownloadRequests.push_back( req );
+//                resourceDownloadFinished();
+//                return;
+//            }
+//            else
+//                if ( !req->isFinished() )
+//                {
+//                    // Queue to be handled when done
+//                    resourceDownloadRequests.push_back( req );
+//                    connect( req.get(), SIGNAL( finished() ), this, SLOT( resourceDownloadFinished() ) );
+//                }
+//            if ( resourceDownloadRequests.empty() ) // No requests were queued
+//            {
+//                gdWarning( "The referenced resource \"%s\" doesn't exist\n", imageUrl.toString().toUtf8().data() ) ;
+//                return;
+//            }
+//            else
+//                resourceDownloadFinished(); // Check any requests finished already
+//        }
+//        return;
+//    }
+//#endif
 
-    // We might want to initiate translation of the selected word
+//    // We might want to initiate translation of the selected word
 
-    if ( cfg.preferences.doubleClickTranslates )
-    {
-        QString selectedText = ui.definition->selectedText();
+//    if ( cfg.preferences.doubleClickTranslates )
+//    {
+//        QString selectedText = ui.definition->selectedText();
 
-        // Do some checks to make sure there's a sensible selection indeed
-        if ( Folding::applyWhitespaceOnly( gd::toWString( selectedText ) ).size() &&
-             selectedText.size() < 60 )
-        {
-            // Initiate translation
-            Qt::KeyboardModifiers kmod = QApplication::keyboardModifiers();
-            if (kmod & (Qt::ControlModifier | Qt::ShiftModifier))
-            { // open in new tab
-                emit showDefinitionInNewTab( selectedText, getGroup( ui.definition->url() ),
-                                             getCurrentArticle(), Contexts() );
-            }
-            else
-            {
-                QUrl const & ref = ui.definition->url();
+//        // Do some checks to make sure there's a sensible selection indeed
+//        if ( Folding::applyWhitespaceOnly( gd::toWString( selectedText ) ).size() &&
+//             selectedText.size() < 60 )
+//        {
+//            // Initiate translation
+//            Qt::KeyboardModifiers kmod = QApplication::keyboardModifiers();
+//            if (kmod & (Qt::ControlModifier | Qt::ShiftModifier))
+//            { // open in new tab
+//                emit showDefinitionInNewTab( selectedText, getGroup( ui.definition->url() ),
+//                                             getCurrentArticle(), Contexts() );
+//            }
+//            else
+//            {
+//                QUrl const & ref = ui.definition->url();
 
-                if( Qt4x5::Url::hasQueryItem( ref, "dictionaries" ) )
-                {
-                    QStringList dictsList = Qt4x5::Url::queryItemValue(ref, "dictionaries" )
-                            .split( ",", QString::SkipEmptyParts );
-                    showDefinition( selectedText, dictsList, QRegExp(), getGroup( ref ), false );
-                }
-                else
-                    showDefinition( selectedText, getGroup( ref ), getCurrentArticle() );
-            }
-        }
-    }
+//                if( Qt4x5::Url::hasQueryItem( ref, "dictionaries" ) )
+//                {
+//                    QStringList dictsList = Qt4x5::Url::queryItemValue(ref, "dictionaries" )
+//                            .split( ",", QString::SkipEmptyParts );
+//                    showDefinition( selectedText, dictsList, QRegExp(), getGroup( ref ), false );
+//                }
+//                else
+//                    showDefinition( selectedText, getGroup( ref ), getCurrentArticle() );
+//            }
+//        }
+//    }
 }
 
 
