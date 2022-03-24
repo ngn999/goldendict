@@ -8,6 +8,7 @@
 #include <QHelpIndexWidget>
 #include <QLayout>
 #include <QDesktopServices>
+#include <QHelpLink>
 
 #include "helpwindow.hh"
 #include "gddebug.hh"
@@ -25,9 +26,9 @@ void HelpBrowser::showHelpForKeyword( QString const & id )
 {
   if ( helpEngine )
   {
-    QMap< QString, QUrl > links = helpEngine->linksForIdentifier( id );
+    QList< QHelpLink > links = helpEngine->documentsForIdentifier( id );
     if( !links.isEmpty() )
-      setSource( links.constBegin().value() );
+      setSource( links.constBegin()->url );
   }
 }
 

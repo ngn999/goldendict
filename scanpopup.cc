@@ -1012,7 +1012,7 @@ void ScanPopup::leaveEvent( QEvent * event )
   }
 }
 
-void ScanPopup::enterEvent( QEvent * event )
+void ScanPopup::enterEvent( QEnterEvent * event )
 {
   QMainWindow::enterEvent( event );
 

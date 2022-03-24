@@ -176,7 +176,7 @@ private:
   virtual void mouseMoveEvent( QMouseEvent * );
   virtual void mouseReleaseEvent( QMouseEvent * );
   virtual void leaveEvent( QEvent * event );
-  virtual void enterEvent( QEvent * event );
+  virtual void enterEvent( QEnterEvent * event );
   virtual void showEvent( QShowEvent * );
 
   /// Returns inputWord, chopped with appended ... if it's too long/

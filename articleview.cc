@@ -2405,12 +2405,13 @@ void ArticleView::performFindOperation( bool restart, bool backwards, bool check
       }
     }
 
-    QWebPage::FindFlags f( 0 );
+    QWebEnginePage::FindFlags f( 0 );
 
     if ( ui.searchCaseSensitive->isChecked() )
-      f |= QWebPage::FindCaseSensitively;
-#if QT_VERSION >= 0x040600
-    f |= QWebPage::HighlightAllOccurrences;
+      f |= QWebEnginePage::FindCaseSensitively;
+    // TODO: fixme
+#if QT_VERSION >= 0x040600 && 0
+    f |= QWebEnginePage::HighlightAllOccurrences;
 #endif
 
     ui.definition->findText( "", f );

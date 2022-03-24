@@ -403,9 +403,8 @@ sptr< Dictionary::DataRequest > ArticleNetworkAccessManager::getResource(
     }
 
     // See if we have some dictionaries muted
-
-    QSet< QString > mutedDicts =
-        QSet< QString >::fromList( Qt4x5::Url::queryItemValue( url, "muted" ).split( ',' ) );
+    QStringList itemValues = Qt4x5::Url::queryItemValue( url, "muted" ).split( ',' );
+    QSet< QString > mutedDicts = QSet< QString >(itemValues.begin(), itemValues.end() );
 
     // Unpack contexts
 
