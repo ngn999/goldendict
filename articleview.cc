@@ -268,8 +268,8 @@ ArticleView::ArticleView( QWidget * parent, ArticleNetworkAccessManager & nm,
 
     //  ui.definition->page()->setNetworkAccessManager( &articleNetMgr );
 
-    connect( ui.definition, SIGNAL( loadFinished( bool ) ),
-             this, SLOT( loadFinished( bool ) ) );
+    connect( ui.definition, SIGNAL( loadFinished(bool) ),
+             this, SLOT( loadFinished(bool) ) );
 
     attachToJavaScript();
     connect( ui.definition->page(), SIGNAL( javaScriptWindowObjectCleared() ),

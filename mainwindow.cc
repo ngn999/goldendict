@@ -668,11 +668,11 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
     connect( ui.showReference, SIGNAL( triggered() ),
              this, SLOT( showGDHelp() ) );
 
-    connect( groupListInDock, SIGNAL( currentIndexChanged( QString const & ) ),
-             this, SLOT( currentGroupChanged( QString const & ) ) );
+    connect( groupListInDock, SIGNAL( currentIndexChanged( int ) ),
+             this, SLOT( currentGroupChanged( int ) ) );
 
-    connect( groupListInToolbar, SIGNAL( currentIndexChanged( QString const & ) ),
-             this, SLOT( currentGroupChanged( QString const & ) ) );
+    connect( groupListInToolbar, SIGNAL( currentIndexChanged( int ) ),
+             this, SLOT( currentGroupChanged( int ) ) );
 
     connect( ui.translateLine, SIGNAL( textChanged( QString const & ) ),
              this, SLOT( translateInputChanged( QString const & ) ) );
@@ -1382,8 +1382,8 @@ void MainWindow::updateGroupList()
 
     // currentIndexChanged() signal is very trigger-happy. To avoid triggering
     // it, we disconnect it while we're clearing and filling back groups.
-    disconnect( groupList, SIGNAL( currentIndexChanged( QString const & ) ),
-                this, SLOT( currentGroupChanged( QString const & ) ) );
+    disconnect( groupList, SIGNAL( currentIndexChanged( int ) ),
+                this, SLOT( currentGroupChanged( int ) ) );
 
     groupInstances.clear();
 
@@ -1428,8 +1428,8 @@ void MainWindow::updateGroupList()
         view.reload();
     }
 
-    connect( groupList, SIGNAL( currentIndexChanged( QString const & ) ),
-             this, SLOT( currentGroupChanged( QString const & ) ) );
+    connect( groupList, SIGNAL( currentIndexChanged( int ) ),
+             this, SLOT( currentGroupChanged( int ) ) );
 }
 
 void MainWindow::updateDictionaryBar()
@@ -2231,7 +2231,7 @@ void MainWindow::editPreferences()
     ftsIndexing.doIndexing();
 }
 
-void MainWindow::currentGroupChanged( QString const & )
+void MainWindow::currentGroupChanged( int )
 {
     cfg.lastMainGroupId = groupList->getCurrentGroup();
     Instances::Group const * igrp = groupInstances.findGroup( cfg.lastMainGroupId );
