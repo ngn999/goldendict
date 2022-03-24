@@ -253,25 +253,25 @@ ArticleView::ArticleView( QWidget * parent, ArticleNetworkAccessManager & nm,
   connect( &goForwardAction, SIGNAL( triggered() ),
            this, SLOT( forward() ) );
 
-  ui.definition->pageAction( QWebPage::Copy )->setShortcut( QKeySequence::Copy );
-  ui.definition->addAction( ui.definition->pageAction( QWebPage::Copy ) );
+  ui.definition->pageAction( QWebEnginePage::Copy )->setShortcut( QKeySequence::Copy );
+  ui.definition->addAction( ui.definition->pageAction( QWebEnginePage::Copy ) );
 
-  QAction * selectAll = ui.definition->pageAction( QWebPage::SelectAll );
+  QAction * selectAll = ui.definition->pageAction( QWebEnginePage::SelectAll );
   selectAll->setShortcut( QKeySequence::SelectAll );
   selectAll->setShortcutContext( Qt::WidgetWithChildrenShortcut );
   ui.definition->addAction( selectAll );
 
   ui.definition->setContextMenuPolicy( Qt::CustomContextMenu );
 
-  ui.definition->page()->setLinkDelegationPolicy( QWebPage::DelegateAllLinks );
+//  ui.definition->page()->setLinkDelegationPolicy( QWebEnginePage::DelegateAllLinks );
 
-  ui.definition->page()->setNetworkAccessManager( &articleNetMgr );
+//  ui.definition->page()->setNetworkAccessManager( &articleNetMgr );
 
   connect( ui.definition, SIGNAL( loadFinished( bool ) ),
            this, SLOT( loadFinished( bool ) ) );
 
   attachToJavaScript();
-  connect( ui.definition->page()->mainFrame(), SIGNAL( javaScriptWindowObjectCleared() ),
+  connect( ui.definition->page(), SIGNAL( javaScriptWindowObjectCleared() ),
            this, SLOT( attachToJavaScript() ) );
 
   connect( ui.definition, SIGNAL( titleChanged( QString const & ) ),
@@ -1783,7 +1783,7 @@ void ArticleView::contextMenuRequested( QPoint const & pos )
     {
       followLinkExternal = new QAction( tr( "Open Link in &External Browser" ), &menu );
       menu.addAction( followLinkExternal );
-      menu.addAction( ui.definition->pageAction( QWebPage::CopyLinkToClipboard ) );
+      menu.addAction( ui.definition->pageAction( QWebEnginePage::CopyLinkToClipboard ) );
     }
   }
 
@@ -1795,7 +1795,7 @@ void ArticleView::contextMenuRequested( QPoint const & pos )
     imageUrl = QUrl::fromPercentEncoding( el.attribute( "src" ).toLatin1() );
     if( !imageUrl.isEmpty() )
     {
-      menu.addAction( ui.definition->pageAction( QWebPage::CopyImageToClipboard ) );
+      menu.addAction( ui.definition->pageAction( QWebEnginePage::CopyImageToClipboard ) );
       saveImageAction = new QAction( tr( "Save &image..." ), &menu );
       menu.addAction( saveImageAction );
     }
@@ -1886,13 +1886,13 @@ void ArticleView::contextMenuRequested( QPoint const & pos )
 
   if ( selectedText.size() )
   {
-    menu.addAction( ui.definition->pageAction( QWebPage::Copy ) );
+    menu.addAction( ui.definition->pageAction( QWebEnginePage::Copy ) );
     menu.addAction( &copyAsTextAction );
   }
   else
   {
     menu.addAction( &selectCurrentArticleAction );
-    menu.addAction( ui.definition->pageAction( QWebPage::SelectAll ) );
+    menu.addAction( ui.definition->pageAction( QWebEnginePage::SelectAll ) );
   }
 
   map< QAction *, QString > tableOfContents;
@@ -2423,13 +2423,13 @@ void ArticleView::performFindOperation( bool restart, bool backwards, bool check
       return;
   }
 
-  QWebPage::FindFlags f( 0 );
+  QWebEnginePage::FindFlags f( 0 );
 
   if ( ui.searchCaseSensitive->isChecked() )
-    f |= QWebPage::FindCaseSensitively;
+    f |= QWebEnginePage::FindCaseSensitively;
 
   if ( backwards )
-    f |= QWebPage::FindBackward;
+    f |= QWebEnginePage::FindBackward;
 
   bool setMark = text.size() && !ui.definition->findText( text, f );
 
@@ -2542,7 +2542,7 @@ void ArticleView::copyAsText()
 
 void ArticleView::inspect()
 {
-  ui.definition->triggerPageAction( QWebPage::InspectElement );
+  ui.definition->triggerPageAction( QWebEnginePage::InspectElement );
 }
 
 void ArticleView::highlightFTSResults()
@@ -2669,7 +2669,7 @@ void ArticleView::highlightFTSResults()
       for( int x = 0; x < allMatches.size(); x++ )
           ui.definition->findText( allMatches.at( x ), flags );
       // TODO: fixme
-      // flags &= ~QWebPage::HighlightAllOccurrences;
+      // flags &= ~QWebEnginePage::HighlightAllOccurrences;
 #endif
 
       if( !allMatches.isEmpty() )
