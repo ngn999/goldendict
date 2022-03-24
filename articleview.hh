@@ -164,7 +164,7 @@ public:
   { ui.definition->setZoomFactor( factor ); }
 
   /// Returns current article's text in .html format
-  QString toHtml(const std::function<void(const QString &)> &resultCallback);
+  void toHtml(const std::function<void(const QString &)> &resultCallback);
 
   /// Returns current article's title
   QString getTitle();
