@@ -228,7 +228,7 @@ mac {
     ICON = icons/macicon.icns
     QMAKE_INFO_PLIST = myInfo.plist
     QMAKE_POST_LINK = mkdir -p GoldenDict.app/Contents/Frameworks & \
-                      cp -nR $${PWD}/maclibs/lib/ GoldenDict.app/Contents/Frameworks/ & \
+                      cp -nR /opt/homebrew/lib/libogg* GoldenDict.app/Contents/Frameworks/ & \
                       mkdir -p GoldenDict.app/Contents/MacOS/locale & \
                       cp -R locale/*.qm GoldenDict.app/Contents/MacOS/locale/ & \
                       mkdir -p GoldenDict.app/Contents/MacOS/help & \
@@ -243,8 +243,8 @@ mac {
                                  cp -R $${PWD}/opencc/*.ocd GoldenDict.app/Contents/MacOS/opencc/
         } else {
             QMAKE_POST_LINK += & mkdir -p GoldenDict.app/Contents/MacOS/opencc & \
-                                 cp -R $${PWD}/opencc/x64/*.json GoldenDict.app/Contents/MacOS/opencc/ & \
-                                 cp -R $${PWD}/opencc/x64/*.ocd GoldenDict.app/Contents/MacOS/opencc/
+                                 cp -R /opt/homebrew/Cellar/opencc/1.1.3/share/opencc/*.json GoldenDict.app/Contents/MacOS/opencc/ & \
+                                 cp -R /opt/homebrew/Cellar/opencc/1.1.3/share/opencc/*.ocd2 GoldenDict.app/Contents/MacOS/opencc/
         }
     }
 }
