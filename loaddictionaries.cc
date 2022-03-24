@@ -32,9 +32,9 @@
 #include "slob.hh"
 #include "gls.hh"
 
-#ifndef NO_EPWING_SUPPORT
-#include "epwing.hh"
-#endif
+//#ifndef NO_EPWING_SUPPORT
+//#include "epwing.hh"
+//#endif
 
 #ifdef MAKE_CHINESE_CONVERSION_SUPPORT
 #include "chinese.hh"
@@ -67,9 +67,9 @@ LoadDictionaries::LoadDictionaries( Config::Class const & cfg ):
 #ifdef MAKE_ZIM_SUPPORT
               << "*.zim" << "*.zimaa" << "*.slob"
 #endif
-#ifndef NO_EPWING_SUPPORT
-              << "*catalogs"
-#endif
+//#ifndef NO_EPWING_SUPPORT
+//              << "*catalogs"
+//#endif
 ;
 }
 
@@ -229,15 +229,15 @@ void LoadDictionaries::handlePath( Config::Path const & path )
                          slobDictionaries.end() );
   }
 #endif
-#ifndef NO_EPWING_SUPPORT
-  {
-    vector< sptr< Dictionary::Class > > epwingDictionaries =
-      Epwing::makeDictionaries( allFiles, FsEncoding::encode( Config::getIndexDir() ), *this );
+//#ifndef NO_EPWING_SUPPORT
+//  {
+//    vector< sptr< Dictionary::Class > > epwingDictionaries =
+//      Epwing::makeDictionaries( allFiles, FsEncoding::encode( Config::getIndexDir() ), *this );
 
-    dictionaries.insert( dictionaries.end(), epwingDictionaries.begin(),
-                         epwingDictionaries.end() );
-  }
-#endif
+//    dictionaries.insert( dictionaries.end(), epwingDictionaries.begin(),
+//                         epwingDictionaries.end() );
+//  }
+//#endif
 }
 
 void LoadDictionaries::indexingDictionary( string const & dictionaryName ) throw()

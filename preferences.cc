@@ -355,9 +355,9 @@ Preferences::Preferences( QWidget * parent, Config::Class & cfg_ ):
   ui.allowZim->hide();
   ui.allowSlob->hide();
 #endif
-#ifdef NO_EPWING_SUPPORT
-  ui.allowEpwing->hide();
-#endif
+//#ifdef NO_EPWING_SUPPORT
+//  ui.allowEpwing->hide();
+//#endif
   ui.maxDictionarySize->setValue( p.fts.maxDictionarySize );
 }
 

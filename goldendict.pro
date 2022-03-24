@@ -41,9 +41,9 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     CONFIG += help
 }
 
-!CONFIG( no_ffmpeg_player ) {
-  DEFINES += MAKE_FFMPEG_PLAYER
-}
+#!CONFIG( no_ffmpeg_player ) {
+#  DEFINES += MAKE_FFMPEG_PLAYER
+#}
 
 QT += sql
 CONFIG += exceptions \
@@ -91,7 +91,7 @@ win32 {
         !x64:QMAKE_LFLAGS += -Wl,--large-address-aware
 
         isEmpty(HUNSPELL_LIB) {
-          LIBS += -lhunspell-1.6.1
+          LIBS += -lhunspell-1.7
         } else {
           LIBS += -l$$HUNSPELL_LIB
         }
@@ -108,13 +108,13 @@ win32 {
     LIBS += -lvorbisfile \
         -lvorbis \
         -logg
-    !CONFIG( no_ffmpeg_player ) {
-        LIBS += -lao \
-            -lswresample-gd \
-            -lavutil-gd \
-            -lavformat-gd \
-            -lavcodec-gd
-    }
+#    !CONFIG( no_ffmpeg_player ) {
+#        LIBS += -lao \
+#            -lswresample-gd \
+#            -lavutil-gd \
+#            -lavformat-gd \
+#            -lavcodec-gd
+#    }
 
 
     RC_FILE = goldendict.rc
@@ -210,17 +210,17 @@ mac {
         -lvorbisfile \
         -lvorbis \
         -logg \
-        -lhunspell-1.6.1 \
+        -lhunspell-1.7 \
         -llzo2
-    !CONFIG( no_ffmpeg_player ) {
-        LIBS += -lao \
-            -lswresample-gd \
-            -lavutil-gd \
-            -lavformat-gd \
-            -lavcodec-gd
-    }
-    INCLUDEPATH = $${PWD}/maclibs/include
-    LIBS += -L$${PWD}/maclibs/lib -framework AppKit -framework Carbon
+#    !CONFIG( no_ffmpeg_player ) {
+#        LIBS += -lao \
+#            -lswresample-gd \
+#            -lavutil-gd \
+#            -lavformat-gd \
+#            -lavcodec-gd
+#    }
+    INCLUDEPATH = /opt/homebrew/include/
+    LIBS += -L/opt/homebrew/lib/ -framework AppKit -framework Carbon
     OBJECTIVE_SOURCES += lionsupport.mm \
                          machotkeywrapper.mm \
                          macmouseover.mm \
@@ -558,15 +558,15 @@ CONFIG( no_epwing_support ) {
   DEFINES += NO_EPWING_SUPPORT
 }
 
-!CONFIG( no_epwing_support ) {
-  HEADERS += epwing.hh \
-             epwing_book.hh \
-             epwing_charmap.hh
-  SOURCES += epwing.cc \
-             epwing_book.cc \
-             epwing_charmap.cc
-  LIBS += -leb
-}
+#!CONFIG( no_epwing_support ) {
+#  HEADERS += epwing.hh \
+#             epwing_book.hh \
+#             epwing_charmap.hh
+#  SOURCES += epwing.cc \
+#             epwing_book.cc \
+#             epwing_charmap.cc
+#  LIBS += -leb
+#}
 
 CONFIG( chinese_conversion_support ) {
   DEFINES += MAKE_CHINESE_CONVERSION_SUPPORT
@@ -579,11 +579,7 @@ CONFIG( chinese_conversion_support ) {
     Debug:   LIBS += -lopenccd
     Release: LIBS += -lopencc
   } else {
-    mac {
-      LIBS += -lopencc.2
-    } else {
-      LIBS += -lopencc
-    }
+    LIBS += -lopencc
   }
 }
 
