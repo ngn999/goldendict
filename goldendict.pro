@@ -648,6 +648,8 @@ TRANSLATIONS += locale/ru_RU.ts \
   revtarget.depends = $$QUALIFIED_SOURCES
 }
 
+WEBENGINE_CONFIG+=use_appstore_compliant_code
+
 # This makes qmake generate translations
 
 win32:# Windows doesn't seem to have *-qt4 symlinks
