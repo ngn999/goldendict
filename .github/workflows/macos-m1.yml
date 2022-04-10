@@ -1,4 +1,4 @@
-name: macos-6.2
+name: macos-m1
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
