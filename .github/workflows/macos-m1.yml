@@ -42,6 +42,9 @@ jobs:
       version: 22.4.7-alpha
 
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       # - name: get current time
       #   run: echo "REL_DATE=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
       # - name: get OS version
