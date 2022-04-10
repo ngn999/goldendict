@@ -63,7 +63,12 @@ jobs:
           py7zrversion: '==0.18.1'
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
+
+      - name: get current time
+        run: echo "REL_DATE=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+      - name: get OS version
+        run: echo "OS_VER=$(sw_vers -productVersion)" >> $GITHUB_ENV
 
       - name: build macos
         run: |
@@ -91,7 +96,7 @@ jobs:
           mkdir tmp
           mv ${targetName}.app ./tmp
           # --background "installer_background.png"
-          create-dmg --volname "${targetName} Installer" --volicon "icons/macicon.icns" --window-pos 200 120 --window-size 800 400 --icon-size 100 --icon "${targetName}.app" 200 190 --hide-extension "${targetName}.app" --app-drop-link 600 185 --skip-jenkins "${targetName}.dmg" tmp/
+          create-dmg --volname "${targetName} Installer" --volicon "icons/macicon.icns" --window-pos 200 120 --window-size 800 400 --icon-size 100 --icon "${targetName}.app" 200 190 --hide-extension "${targetName}.app" --app-drop-link 600 185 --skip-jenkins "${targetName}-${{ matrix.qt_ver }}-${{ matrix.os }}.dmg" tmp/
       - name: Set outputs
         id: vars
         run: |
@@ -109,28 +114,37 @@ jobs:
           CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
           echo "::set-output name=COMMIT_SUMMARY::$(echo "$CHANGELOG")"           
       # tag 上传Release
-      - name: uploadRelease
-        uses: svenstaro/upload-release-action@v2
+      - name: publish
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.targetName }}.dmg
-          asset_name: ${{ matrix.qt_ver }}-${{ env.targetName }}_${{ matrix.os }}_${{ steps.vars.outputs.sha_short }}.dmg
-          tag: v${{env.version}}.${{ steps.vars.outputs.release_hm }}.${{ steps.vars.outputs.sha_short }}
-          overwrite: true 
-          release_name: win-linux-macos-${{steps.vars.outputs.release_date}} 
-          prerelease: true
-          body: |
-            release on date:      ${{steps.vars.outputs.release_date}} time: ${{steps.vars.outputs.release_time_clock}}  
-            branch:               ${{ github.ref_name }}
-            commit:               ${{ steps.vars.outputs.sha_short }} 
-            Qt version:           ${{ matrix.qt_ver }} ${{ matrix.qt_arch }}
-            Windows built with:   msvc64  Visual studio 2019
-            # goldendict.exe can not used alone 
-            if you have a previous version. replace this maybe ok. if not ,download the whole bundle.
+          name: ${{ matrix.os }}-${{ env.REL_DATE }}
+          draft: true
+          files: |
+            "${targetName}-${{ matrix.qt_ver }}-${{ matrix.os }}.dmg"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: uploadRelease
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ${{ env.targetName }}.dmg
+      #     asset_name: ${{ matrix.qt_ver }}-${{ env.targetName }}_${{ matrix.os }}_${{ steps.vars.outputs.sha_short }}.dmg
+      #     tag: v${{env.version}}.${{ steps.vars.outputs.release_hm }}.${{ steps.vars.outputs.sha_short }}
+      #     overwrite: true
+      #     release_name: win-linux-macos-${{steps.vars.outputs.release_date}}
+      #     prerelease: true
+      #     body: |
+      #       release on date:      ${{steps.vars.outputs.release_date}} time: ${{steps.vars.outputs.release_time_clock}}
+      #       branch:               ${{ github.ref_name }}
+      #       commit:               ${{ steps.vars.outputs.sha_short }}
+      #       Qt version:           ${{ matrix.qt_ver }} ${{ matrix.qt_arch }}
+      #       Windows built with:   msvc64  Visual studio 2019
+      #       # goldendict.exe can not used alone
+      #       if you have a previous version. replace this maybe ok. if not ,download the whole bundle.
 
-            AppImage built with:  Ubuntu-20.04 ,latest gcc
-            macos built with:     macos-10.15,macos-11.0,clang_64 x86_64(Intel Kind)
-            auto built by github action. use on your on risk:-)   
+      #       AppImage built with:  Ubuntu-20.04 ,latest gcc
+      #       macos built with:     macos-10.15,macos-11.0,clang_64 x86_64(Intel Kind)
+      #       auto built by github action. use on your on risk:-)
 
-            CHANGES:
-            ${{ steps.vars.outputs.COMMIT_SUMMARY }}            
+      #       CHANGES:
+      #       ${{ steps.vars.outputs.COMMIT_SUMMARY }}
