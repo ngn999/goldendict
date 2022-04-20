@@ -597,7 +597,7 @@ void ArticleRequest::bodyFinished()
             }
 
             int size = QTextDocumentFragment::fromHtml( text ).toPlainText().length();
-            if( size > articleSizeLimit )
+            if( size >= articleSizeLimit )
               collapse = true;
           }
           catch(...)
