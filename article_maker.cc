@@ -596,8 +596,8 @@ void ArticleRequest::bodyFinished()
               }
             }
 
-            int size = QTextDocumentFragment::fromHtml( text ).toPlainText().length();
-            if( size >= articleSizeLimit )
+            int size = htmlTextSize( text );
+            if( size > articleSizeLimit )
               collapse = true;
           }
           catch(...)
@@ -748,6 +748,21 @@ void ArticleRequest::bodyFinished()
     emit GlobalBroadcaster::instance()->emitDictIds(ActiveDictIds{word, dictIds});
     dictIds.clear();
   }
+}
+
+int ArticleRequest::htmlTextSize(QString html){
+  //https://bugreports.qt.io/browse/QTBUG-102757
+
+  //website dictionary.
+  if(html.contains(QRegularExpression("<iframe\\s*[^>]*>",QRegularExpression::CaseInsensitiveOption))){
+    //arbitary number;
+    return 1000;
+  }
+
+  QString stripStyleSheet=html.remove(QRegularExpression("<link\\s*[^>]*>",QRegularExpression::CaseInsensitiveOption));
+
+  int size = QTextDocumentFragment::fromHtml( stripStyleSheet ).toPlainText().length();
+  return size;
 }
 
 void ArticleRequest::stemmedSearchFinished()
