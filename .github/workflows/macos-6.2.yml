@@ -67,11 +67,15 @@ jobs:
 
       - name: build macos
         run: |
-          wget ftp://ftp.sra.co.jp/pub/misc/eb/eb-4.4.3.tar.bz2
-          tar xvjf eb-4.4.3.tar.bz2
-          cd eb-4.4.3 && ./configure && make -j 8 && sudo make install && cd ..
+
+          wget https://www.ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+          tar xvjf ffmpeg-snapshot.tar.bz2
+          cd ffmpeg
+          ./configure  --disable-programs --disable-swscale --disable-avdevice --disable-avfilter --enable-shared  --disable-xlib
+          make -j$(nproc)
+          sudo make install
           #brew install qt # or use official offline installer
-          brew install opencc hunspell ffmpeg@5 libtiff xz lzo libogg libvorbis zstd
+          brew install opencc hunspell libtiff xz lzo libogg libvorbis zstd
           brew install create-dmg
           qmake CONFIG+=release   CONFIG+=zim_support   CONFIG+=chinese_conversion_support
           make -j 8
