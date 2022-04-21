@@ -197,8 +197,8 @@ mac {
     }
     QT_CONFIG -= no-pkg-config 
     CONFIG += link_pkgconfig
-    INCLUDEPATH = $${PWD}/maclibs/include /opt/homebrew/include /usr/local/include
-    LIBS += -L$${PWD}/maclibs/lib -L/opt/homebrew/lib -L/usr/local/lib -framework AppKit -framework Carbon
+    INCLUDEPATH = $${PWD}/maclibs/include /opt/homebrew/include
+    LIBS += -L$${PWD}/maclibs/lib -L/opt/homebrew/lib -framework AppKit -framework Carbon
     OBJECTIVE_SOURCES += lionsupport.mm \
                          machotkeywrapper.mm \
                          macmouseover.mm \
