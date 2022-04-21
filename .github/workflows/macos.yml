@@ -67,6 +67,7 @@ jobs:
           fetch-depth: 0
       - name: build macos
         run: |
+          brew uninstall opencc hunspell ffmpeg@5 ffmpeg@4 libtiff xz lzo libogg libvorbis zstd
           brew install create-dmg
           qmake CONFIG+=release   CONFIG+=zim_support   CONFIG+=chinese_conversion_support
           make -j$(nproc)
