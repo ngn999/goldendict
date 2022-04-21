@@ -186,7 +186,7 @@ mac {
         -lvorbisfile \
         -lvorbis \
         -logg \
-        -lhunspell-1.7.0 \
+        -lhunspell \
         -llzo2
     !CONFIG( no_ffmpeg_player ) {
         LIBS += -lao \
