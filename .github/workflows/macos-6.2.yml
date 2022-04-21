@@ -74,6 +74,7 @@ jobs:
           ./configure  --disable-programs --disable-swscale --disable-avdevice --disable-avfilter --enable-shared  --disable-xlib
           make -j$(nproc)
           sudo make install
+          cd ..
           #brew install qt # or use official offline installer
           #brew uninstall ffmpeg@5 libvorbis zstd libogg lzo xz libtiff hunspell opencc
           brew install create-dmg
