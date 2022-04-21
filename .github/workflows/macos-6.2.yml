@@ -75,6 +75,7 @@ jobs:
           make -j$(nproc)
           sudo make install
           #brew install qt # or use official offline installer
+          brew uninstall ffmpeg@5
           brew install opencc hunspell libtiff xz lzo libogg libvorbis zstd
           brew install create-dmg
           qmake CONFIG+=release   CONFIG+=zim_support   CONFIG+=chinese_conversion_support
