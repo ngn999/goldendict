@@ -67,9 +67,9 @@ jobs:
 
       - name: build macos
         run: |
-
+          brew install nasm
           wget https://www.ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
-          tar xvjf ffmpeg-snapshot.tar.bz2
+          tar xjf ffmpeg-snapshot.tar.bz2
           cd ffmpeg
           ./configure  --disable-programs --disable-swscale --disable-avdevice --disable-avfilter --enable-shared  --disable-xlib
           make -j$(nproc)
